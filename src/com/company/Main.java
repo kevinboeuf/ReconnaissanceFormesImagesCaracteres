@@ -27,6 +27,7 @@ public class Main {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        writer.println("% 1. Title: Images attributes Database");
         for (ImageAttributes i : list){
             writer.println(i.format + separator + i.relevantSurface + separator + i.size);
         }

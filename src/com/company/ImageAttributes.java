@@ -6,13 +6,15 @@ import com.company.ImageFormat;
  * Created by Kevin on 15/01/2016.
  */
 public class ImageAttributes {
-    int size;
-    int relevantSurface;
-    ImageFormat format;
+    Attribute<Integer> size;
+    Attribute<Integer> relevantSurface;
+    Attribute<ImageFormat> format;
 
-    public ImageAttributes(int size, int relevantSurface, ImageFormat format) {
+    public ImageAttributes(Attribute<Integer> size, Attribute<Integer> relevantSurface, Attribute<ImageFormat> format) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
     }
+
+
 }

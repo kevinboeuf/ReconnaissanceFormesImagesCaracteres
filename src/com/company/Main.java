@@ -1,26 +1,92 @@
 package com.company;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.jar.Attributes;
+import java.util.Map;
 
 public class Main {
 
     public static final String ATTRIBUTE_PACKAGE = "com.company";
+    public static final String FOLDER = "C://Users/Kevin/Desktop/IMR3/Reco_formes/English/Img/GoodImg/Bmp/";
+    public static JFrame jframe = new JFrame();
+    public static Container pane = new Container();
+    public static ImagePanel imagePanel = new ImagePanel();
 
     public static void main(String[] args) {
+        /*
         ImageAttributes imageAttributes1 = new ImageAttributes(new Attribute<Integer>("size", AttributeType.INTEGER, 100), new Attribute<Integer>("relevantSurface", AttributeType.INTEGER, 25), new Attribute<ImageFormat>("format", AttributeType.INTEGER, ImageFormat.HORIZONTAL_RECTANGLE));
         ImageAttributes imageAttributes2 = new ImageAttributes(new Attribute<Integer>("size", AttributeType.INTEGER, 110), new Attribute<Integer>("relevantSurface", AttributeType.INTEGER, 26), new Attribute<ImageFormat>("format", AttributeType.INTEGER, ImageFormat.VERTICAL_RECTANGLE));
         List<ImageAttributes> imageAttributesList = new ArrayList<ImageAttributes>();
         imageAttributesList.add(imageAttributes1);
         imageAttributesList.add(imageAttributes2);
-        printFile(imageAttributesList);
+        */
+        HashMap <String, BufferedImage> imagesList = getImagesList(1, 2);
+        initDrawingFrame();
+        for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
+            showBufferedImage(entry.getKey(), entry.getValue());
+        }
+        //printFile(imageAttributesList);
     }
 
+    /**
+     * Reads all the images from the constant folder and returns it as a list of BufferedImages
+     * @param beginningIndex
+     * @param endingIndex
+     * @return
+     */
+    public static HashMap<String, BufferedImage> getImagesList(int beginningIndex, int endingIndex){
+        HashMap <String, BufferedImage> imagesList = new HashMap <String, BufferedImage>();
+        BufferedImage img = null;
+        List<String> results = null;
+
+        for (int i = beginningIndex; i <= endingIndex; i++) {
+            File[] files = new File(FOLDER + "Sample" + String.format("%03d", i)).listFiles();
+            System.out.println("Fichiers contenus dans le dossier : " + FOLDER + "Sample" + String.format("%03d", i));
+            for (File file : files) {
+                if (file.isFile()) {
+                    System.out.println(file.getName());
+                    try {
+                        img = ImageIO.read(file);
+                        imagesList.put(file.getName(), img);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return imagesList;
+    }
+
+    /**
+     * displays an image
+     * @param image
+     * @return
+     */
+    public static void showBufferedImage(String title, BufferedImage image) {
+        jframe.setTitle(title);
+        imagePanel.setImage(image);
+        imagePanel.repaint();
+    }
+
+    public static void initDrawingFrame(){
+        jframe.setSize(250, 250);
+        jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        imagePanel = new ImagePanel();
+        pane = jframe.getContentPane();
+        pane.add(imagePanel);
+        jframe.setVisible(true);
+    }
+
+    /**
+     * Generate the ARFF file
+     * @param list
+     */
     public static void printFile(List<ImageAttributes> list) {
         final String SEPARATOR = ",";
         PrintWriter writer = null;

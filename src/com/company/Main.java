@@ -23,15 +23,16 @@ public class Main {
     public static void main(String[] args) {
 
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        imageRelationAttributesList.add(new ImageRelation(100, 25, FormatAttribute.HORIZONTAL_RECTANGLE));
-        imageRelationAttributesList.add(new ImageRelation(110, 26, FormatAttribute.VERTICAL_RECTANGLE));
+
+
+
         ImageRelation.generateARFF(imageRelationAttributesList);
 
-        /*HashMap <String, BufferedImage> imagesList = getImagesList(1, 20);
+        HashMap <String, BufferedImage> imagesList = getImagesList(1, 62);
         initDrawingFrame();
         for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
             showBufferedImage(entry.getKey(), entry.getValue());
-        }*/
+        }
     }
 
     /**

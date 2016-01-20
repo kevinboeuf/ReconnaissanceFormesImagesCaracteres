@@ -12,12 +12,15 @@ public class ImageRelation {
 
     static final String RELATION_NAME = "ImageRelation";
 
+    //Size of the image (width * height)
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
     Integer size;
 
+    // Surface concerned by the character
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
     Integer relevantSurface;
 
+    // Horizontal / Vertical rectangle or square
     @RelationAnnotation(classe = FormatAttribute.class)
     FormatAttribute format;
 
@@ -59,7 +62,7 @@ public class ImageRelation {
                 "% 2. Sources:\n" +
                 "%      (a) Creators: Boeuf Kevin & Hennequin Tony\n" +
                 "%      (b) Date: January, 18, 2016\n" +
-                "%\n" +
+                "%\n\n" +
                 "@RELATION "+ ImageRelation.RELATION_NAME +"\n");
 
         // print attributes declarations

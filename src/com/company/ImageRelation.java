@@ -77,7 +77,7 @@ public class ImageRelation {
                     writer.println("@ATTRIBUTE " + field.getName() + " " + relationAnnotation.type());
                 } else if(relationAnnotation.classe() != Enum.class) {
                     Enum[] enumTypes = relationAnnotation.classe().getEnumConstants();
-                    writer.println("@ATTRIBUTE " + field.getName() + " {"+StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
+                    writer.println("@ATTRIBUTE class {"+StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
                 }
             }
         }

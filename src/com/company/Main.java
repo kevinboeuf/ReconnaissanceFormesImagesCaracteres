@@ -13,7 +13,6 @@ import java.util.Map;
 
 public class Main {
 
-
     public static final String ATTRIBUTE_PACKAGE = "com.company";
     public static final String FOLDER = "C://Users/Kevin/Desktop/IMR3/Reco_formes/English/Img/GoodImg/Bmp/";
     public static JFrame jframe = new JFrame();

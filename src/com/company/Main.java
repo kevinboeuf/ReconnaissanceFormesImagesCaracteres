@@ -26,7 +26,7 @@ public class Main {
         imageAttributesList.add(imageAttributes1);
         imageAttributesList.add(imageAttributes2);
         */
-        HashMap <String, BufferedImage> imagesList = getImagesList(1, 2);
+        HashMap <String, BufferedImage> imagesList = getImagesList(1, 20);
         initDrawingFrame();
         for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
             showBufferedImage(entry.getKey(), entry.getValue());

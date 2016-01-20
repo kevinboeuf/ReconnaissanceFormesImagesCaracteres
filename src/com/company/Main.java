@@ -22,17 +22,49 @@ public class Main {
 
     public static void main(String[] args) {
 
+        //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-
-
-
-        ImageRelation.generateARFF(imageRelationAttributesList);
-
         HashMap <String, BufferedImage> imagesList = getImagesList(1, 62);
+
+        //Show the images
         initDrawingFrame();
         for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
             showBufferedImage(entry.getKey(), entry.getValue());
         }
+
+        BufferedImage image;
+
+        //Extract the data
+        for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
+            image = entry.getValue();
+            imageRelationAttributesList.add(getImageRelation(image));
+        }
+
+        //Generate the ARFF
+        ImageRelation.generateARFF(imageRelationAttributesList);
+    }
+
+    public static ImageRelation getImageRelation(BufferedImage image){
+        int size = getSize(image);
+        FormatAttribute format = getFormat(image);
+        ImageRelation.Builder builder = new ImageRelation.Builder();
+        return builder.setSize(size).setFormat(format).build();
+    }
+
+    public static int getSize(BufferedImage image){
+        return image.getWidth()*image.getHeight();
+    }
+
+    public static FormatAttribute getFormat(BufferedImage image){
+        int height = image.getHeight();
+        int width = image.getWidth();
+        FormatAttribute format = FormatAttribute.SQUARE;
+        if(height > width){
+            format = FormatAttribute.VERTICAL_RECTANGLE;
+        }else if (width > height){
+            format = FormatAttribute.HORIZONTAL_RECTANGLE;
+        }
+        return format;
     }
 
     /**

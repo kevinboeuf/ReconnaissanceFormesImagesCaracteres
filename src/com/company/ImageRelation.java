@@ -1,5 +1,6 @@
 package com.company;
 
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -97,5 +98,37 @@ public class ImageRelation {
             writer.println(StringUtils.joinStringArray(attributes, SEPARATOR));
         }
         writer.close();
+    }
+
+    public static class Builder{
+
+        Integer size = -1;
+        Integer relevantSurface = -1;
+        FormatAttribute format = FormatAttribute.SQUARE;
+
+
+        public Builder() {
+
+        }
+
+        public ImageRelation.Builder setSize(Integer size) {
+            this.size = size;
+            return this;
+        }
+
+        public ImageRelation.Builder setRelevantSurface(Integer relevantSurface) {
+            this.relevantSurface = relevantSurface;
+            return this;
+        }
+
+        public ImageRelation.Builder setFormat(FormatAttribute format) {
+            this.format = format;
+            return this;
+        }
+
+        public ImageRelation build(){
+            return new ImageRelation(size, relevantSurface, format);
+        }
+
     }
 }

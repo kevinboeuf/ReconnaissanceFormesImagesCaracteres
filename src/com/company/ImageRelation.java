@@ -12,13 +12,13 @@ public class ImageRelation {
 
     static final String RELATION_NAME = "ImageRelation";
 
-    @RelationAnnotation(simpleType = SimpleAttributeType.NUMERIC)
+    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
     Integer size;
 
-    @RelationAnnotation(simpleType = SimpleAttributeType.NUMERIC)
+    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
     Integer relevantSurface;
 
-    @RelationAnnotation(complexType = FormatAttribute.class)
+    @RelationAnnotation(classe = FormatAttribute.class)
     FormatAttribute format;
 
     public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format) {
@@ -69,10 +69,10 @@ public class ImageRelation {
                 Annotation annotation = field.getAnnotation(RelationAnnotation.class);
                 RelationAnnotation relationAnnotation = (RelationAnnotation) annotation;
 
-                if(!relationAnnotation.simpleType().equals(SimpleAttributeType.NONE)){
-                    writer.println("@ATTRIBUTE " + field.getName() + " " + relationAnnotation.simpleType());
-                } else if(relationAnnotation.complexType() != Enum.class) {
-                    Enum[] enumTypes = relationAnnotation.complexType().getEnumConstants();
+                if(!relationAnnotation.type().equals(SimpleAttributeType.NONE)){
+                    writer.println("@ATTRIBUTE " + field.getName() + " " + relationAnnotation.type());
+                } else if(relationAnnotation.classe() != Enum.class) {
+                    Enum[] enumTypes = relationAnnotation.classe().getEnumConstants();
                     writer.println("@ATTRIBUTE " + field.getName() + " {"+StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
                 }
             }

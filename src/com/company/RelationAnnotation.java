@@ -9,6 +9,7 @@ import com.company.ImageRelation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface RelationAnnotation {
-    SimpleAttributeType simpleType() default SimpleAttributeType.NONE;
-    Class<? extends Enum> complexType() default Enum.class;
+    SimpleAttributeType type() default SimpleAttributeType.NONE;
+    Class<? extends Enum> classe() default Enum.class;
+
 }

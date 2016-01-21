@@ -24,24 +24,24 @@ public class Main {
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        HashMap <String, BufferedImage> imagesList = getImagesList(1, 62);
+        HashMap <ImageClass, BufferedImage> imagesList = getImagesList(1, 62);
 
         System.out.println("\t" + imagesList.size() + " images récupérées");
 
         //Show the images
-        initDrawingFrame();
-        for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
+        /*initDrawingFrame();
+        for (Map.Entry<ImageClass, BufferedImage> entry : imagesList.entrySet()){
             showBufferedImage(entry.getKey(), entry.getValue());
-        }
+        }*/
 
         BufferedImage image;
 
         System.out.println("\n=== Extraction des attributs des images ===\n");
 
         //Extract the data
-        for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
+        for (Map.Entry<ImageClass, BufferedImage> entry : imagesList.entrySet()){
             image = entry.getValue();
-            imageRelationAttributesList.add(getImageRelation(image));
+            imageRelationAttributesList.add(getImageRelation(image, entry.getKey()));
         }
 
         //Generate the ARFF
@@ -50,11 +50,14 @@ public class Main {
         System.out.println("\tDone");
     }
 
-    public static ImageRelation getImageRelation(BufferedImage image){
+    public static ImageRelation getImageRelation(BufferedImage image, ImageClass imageClass){
         int size = getSize(image);
         FormatAttribute format = getFormat(image);
         ImageRelation.Builder builder = new ImageRelation.Builder();
-        return builder.setSize(size).setFormat(format).build();
+        return builder.setSize(size)
+                .setFormat(format)
+                .setClasse(imageClass)
+                .build();
     }
 
     public static int getSize(BufferedImage image){
@@ -79,8 +82,8 @@ public class Main {
      * @param endingIndex
      * @return
      */
-    public static HashMap<String, BufferedImage> getImagesList(int beginningIndex, int endingIndex){
-        HashMap <String, BufferedImage> imagesList = new HashMap <String, BufferedImage>();
+    public static HashMap<ImageClass, BufferedImage> getImagesList(int beginningIndex, int endingIndex){
+        HashMap <ImageClass, BufferedImage> imagesList = new HashMap <ImageClass, BufferedImage>();
         BufferedImage img = null;
         List<String> results = null;
 
@@ -90,7 +93,8 @@ public class Main {
                 if (file.isFile()) {
                     try {
                         img = ImageIO.read(file);
-                        imagesList.put(file.getName(), img);
+                        ImageClass imageClass = ImageClass.getImageClass("Sample" + String.format("%03d", i));
+                        imagesList.put(imageClass, img);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

@@ -26,12 +26,13 @@ public class ImageRelation {
     FormatAttribute format;
 
     @RelationAnnotation(classe = ImageClass.class)
-    FormatAttribute classe;
+    ImageClass classe = ImageClass.A;
 
-    public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format) {
+    public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
+        this.classe = classe;
     }
 
     /**
@@ -91,16 +92,10 @@ public class ImageRelation {
             List<String> attributes = new ArrayList<>();
             for (Field field : obj.getDeclaredFields()) {
                 if (field.isAnnotationPresent(RelationAnnotation.class)) {
-                    Annotation annotation = field.getAnnotation(RelationAnnotation.class);
-                    RelationAnnotation relationAnnotation = (RelationAnnotation) annotation;
-
-                    // Si ce n'est pas lattribut classe
-                    if(relationAnnotation.classe() == Enum.class) {
-                        try {
-                            attributes.add(field.get(imageRelation).toString());
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
+                    try {
+                        attributes.add(field.get(imageRelation).toString());
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -114,7 +109,7 @@ public class ImageRelation {
         Integer size = -1;
         Integer relevantSurface = -1;
         FormatAttribute format = FormatAttribute.SQUARE;
-
+        ImageClass classe = ImageClass.A;
 
         public Builder() {
 
@@ -135,8 +130,13 @@ public class ImageRelation {
             return this;
         }
 
+        public ImageRelation.Builder setClasse(ImageClass classe) {
+            this.classe = classe;
+            return this;
+        }
+
         public ImageRelation build(){
-            return new ImageRelation(size, relevantSurface, format);
+            return new ImageRelation(size, relevantSurface, format, classe);
         }
 
     }

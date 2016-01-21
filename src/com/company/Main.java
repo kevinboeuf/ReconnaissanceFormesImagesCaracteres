@@ -34,6 +34,7 @@ public class Main {
         for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
             image = entry.getValue();
             imageRelationAttributesList.add(getImageRelation(image));
+            System.out.println(entry.getKey());
         }
 
         //Generate the ARFF

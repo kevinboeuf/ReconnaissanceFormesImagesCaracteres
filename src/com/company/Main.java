@@ -20,11 +20,11 @@ public class Main {
 
         System.out.println("\n=== Récupération des images ===\n");
 
-        System.out.println("\tDossier d'images : " + LocalConfiguration.Folder);
+        System.out.println("\tDossier d'images : " + LocalConfiguration.FOLDER);
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        HashMap <ImageClass, BufferedImage> imagesList = getImagesList(1, 62);
+        HashMap <String, Image> imagesList = getImagesList(1, 62);
 
         System.out.println("\t" + imagesList.size() + " images récupérées");
 
@@ -39,9 +39,9 @@ public class Main {
         System.out.println("\n=== Extraction des attributs des images ===\n");
 
         //Extract the data
-        for (Map.Entry<ImageClass, BufferedImage> entry : imagesList.entrySet()){
-            image = entry.getValue();
-            imageRelationAttributesList.add(getImageRelation(image, entry.getKey()));
+        for (Map.Entry<String, Image> entry : imagesList.entrySet()){
+            image = entry.getValue().bufferedImage;
+            imageRelationAttributesList.add(getImageRelation(image, entry.getValue().imageClass));
         }
 
         //Generate the ARFF
@@ -82,19 +82,19 @@ public class Main {
      * @param endingIndex
      * @return
      */
-    public static HashMap<ImageClass, BufferedImage> getImagesList(int beginningIndex, int endingIndex){
-        HashMap <ImageClass, BufferedImage> imagesList = new HashMap <ImageClass, BufferedImage>();
+    public static HashMap<String, Image> getImagesList(int beginningIndex, int endingIndex){
+        HashMap <String, Image> imagesList = new HashMap <String, Image>();
         BufferedImage img = null;
         List<String> results = null;
 
         for (int i = beginningIndex; i <= endingIndex; i++) {
-            File[] files = new File(LocalConfiguration.Folder + "Sample" + String.format("%03d", i)).listFiles();
+            File[] files = new File(LocalConfiguration.FOLDER + "Sample" + String.format("%03d", i)).listFiles();
             for (File file : files) {
                 if (file.isFile()) {
                     try {
                         img = ImageIO.read(file);
                         ImageClass imageClass = ImageClass.getImageClass("Sample" + String.format("%03d", i));
-                        imagesList.put(imageClass, img);
+                        imagesList.put(file.getName(), new Image(file.getName(), img, imageClass));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

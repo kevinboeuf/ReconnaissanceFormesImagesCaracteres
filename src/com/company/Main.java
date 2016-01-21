@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +12,6 @@ import java.util.Map;
 
 public class Main {
 
-    public static final String ATTRIBUTE_PACKAGE = "com.company";
-    public static final String FOLDER = "C://Users/Kevin/Desktop/IMR3/Reco_formes/English/Img/GoodImg/Bmp/";
     public static JFrame jframe = new JFrame();
     public static Container pane = new Container();
     public static ImagePanel imagePanel = new ImagePanel();
@@ -78,8 +75,8 @@ public class Main {
         List<String> results = null;
 
         for (int i = beginningIndex; i <= endingIndex; i++) {
-            File[] files = new File(FOLDER + "Sample" + String.format("%03d", i)).listFiles();
-            System.out.println("Fichiers contenus dans le dossier : " + FOLDER + "Sample" + String.format("%03d", i));
+            File[] files = new File(LocalConfiguration.Folder + "Sample" + String.format("%03d", i)).listFiles();
+            System.out.println("Fichiers contenus dans le dossier : " + LocalConfiguration.Folder + "Sample" + String.format("%03d", i));
             for (File file : files) {
                 if (file.isFile()) {
                     System.out.println(file.getName());

@@ -22,8 +22,11 @@ public class ImageRelation {
     Integer relevantSurface;
 
     // Horizontal / Vertical rectangle or square
-    @RelationAnnotation(classe = FormatAttribute.class)
+    @RelationAnnotation(type = SimpleAttributeType.STRING)
     FormatAttribute format;
+
+    @RelationAnnotation(classe = ImageClass.class)
+    FormatAttribute classe;
 
     public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format) {
         this.size = size;

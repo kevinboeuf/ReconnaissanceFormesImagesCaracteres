@@ -18,9 +18,15 @@ public class Main {
 
     public static void main(String[] args) {
 
+        System.out.println("\n=== Récupération des images ===\n");
+
+        System.out.println("\tDossier d'images : " + LocalConfiguration.Folder);
+
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
         HashMap <String, BufferedImage> imagesList = getImagesList(1, 62);
+
+        System.out.println("\t" + imagesList.size() + " images récupérées");
 
         //Show the images
         initDrawingFrame();
@@ -30,15 +36,18 @@ public class Main {
 
         BufferedImage image;
 
+        System.out.println("\n=== Extraction des attributs des images ===\n");
+
         //Extract the data
         for (Map.Entry<String, BufferedImage> entry : imagesList.entrySet()){
             image = entry.getValue();
             imageRelationAttributesList.add(getImageRelation(image));
-            System.out.println(entry.getKey());
         }
 
         //Generate the ARFF
         ImageRelation.generateARFF(imageRelationAttributesList);
+
+        System.out.println("\tDone");
     }
 
     public static ImageRelation getImageRelation(BufferedImage image){
@@ -77,10 +86,8 @@ public class Main {
 
         for (int i = beginningIndex; i <= endingIndex; i++) {
             File[] files = new File(LocalConfiguration.Folder + "Sample" + String.format("%03d", i)).listFiles();
-            System.out.println("Fichiers contenus dans le dossier : " + LocalConfiguration.Folder + "Sample" + String.format("%03d", i));
             for (File file : files) {
                 if (file.isFile()) {
-                    System.out.println(file.getName());
                     try {
                         img = ImageIO.read(file);
                         imagesList.put(file.getName(), img);

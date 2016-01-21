@@ -91,10 +91,16 @@ public class ImageRelation {
             List<String> attributes = new ArrayList<>();
             for (Field field : obj.getDeclaredFields()) {
                 if (field.isAnnotationPresent(RelationAnnotation.class)) {
-                    try {
-                        attributes.add(field.get(imageRelation).toString());
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                    Annotation annotation = field.getAnnotation(RelationAnnotation.class);
+                    RelationAnnotation relationAnnotation = (RelationAnnotation) annotation;
+
+                    // Si ce n'est pas lattribut classe
+                    if(relationAnnotation.classe() == Enum.class) {
+                        try {
+                            attributes.add(field.get(imageRelation).toString());
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

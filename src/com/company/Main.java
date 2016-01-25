@@ -24,17 +24,15 @@ public class Main {
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        HashMap <String, Image> imagesList = getImagesList(1, 3);
+        HashMap <String, Image> imagesList = getImagesList(1, 2);
 
         System.out.println("\t" + imagesList.size() + " images récupérées");
 
         //Show the images
         initDrawingFrame();
         for (Map.Entry<String, Image> entry : imagesList.entrySet()){
-            //showBufferedImage(entry.getKey(), entry.getValue().bufferedImage);
-            //getBlackWhiteImage(entry.getKey(), entry.getValue().bufferedImage);
-            //getGaussianBluredImage(entry.getKey(), entry.getValue().bufferedImage);
-            getBlackWhiteImage(entry.getKey(), getGaussianBluredImage(entry.getKey(), entry.getValue().bufferedImage));
+            BufferedImage grayscale = toGray(getGaussianBluredImage(entry.getValue().bufferedImage));
+            BufferedImage binarized = binarize(entry.getKey(), grayscale);
         }
 
         BufferedImage image;
@@ -63,10 +61,20 @@ public class Main {
                 .build();
     }
 
+    /**
+     * Get the size of an image
+     * @param image
+     * @return
+     */
     public static int getSize(BufferedImage image){
         return image.getWidth()*image.getHeight();
     }
 
+    /**
+     * Get the format of the image
+     * @param image
+     * @return
+     */
     public static FormatAttribute getFormat(BufferedImage image){
         int height = image.getHeight();
         int width = image.getWidth();
@@ -130,55 +138,162 @@ public class Main {
         jframe.setVisible(true);
     }
 
-    /*public static void getBlackWhiteImage(String name, BufferedImage image) {
-        BufferedImage grayScale = image;
-        ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
-        BufferedImage res = op.filter(grayScale, grayScale);
+    /**
+     * Return an image with an applied Gaussian Blur
+     * @param image
+     * @return
+     */
+   public static BufferedImage getGaussianBluredImage(BufferedImage image){
+        float[] matrix = {
+                1/16f, 1/8f, 1/16f,
+                1/8f, 1/4f, 1/8f,
+                1/16f, 1/8f, 1/16f,
+        };
 
-        BufferedImage blackWhite = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
-        showBufferedImage(name, res);
-    }*/
-
-    public static BufferedImage getBlackWhiteImage(String name, BufferedImage image){
         BufferedImage original = image;
-        BufferedImage binarized = new BufferedImage(original.getWidth(), original.getHeight(),BufferedImage.TYPE_BYTE_BINARY);
-        try
-        {
+        BufferedImageOp op = new ConvolveOp(new Kernel(3, 3, matrix), ConvolveOp.EDGE_NO_OP, null);
+        BufferedImage blurredImage = op.filter(original, null);
 
-            int red;
-            int newPixel;
-            int threshold = 100;
+       return blurredImage;
+    }
 
-            for(int i=0; i<original.getWidth(); i++)
-            {
-                for(int j=0; j<original.getHeight(); j++)
-                {
-                    // Get pixels
-                    red = new Color(original.getRGB(i, j)).getGreen();
-                    int alpha = new Color(original.getRGB(i, j)).getAlpha();
-                    if(red > threshold)
-                    {
-                        newPixel = 0;
-                    }
-                    else
-                    {
-                        newPixel = 255;
-                    }
-                    newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
-                    binarized.setRGB(i, j, newPixel);
-                }
+    /**
+     * Returns the histogram of the image
+     */
+   public static int[] imageHistogram(BufferedImage input) {
+
+        int[] histogram = new int[256];
+
+        for(int i=0; i<histogram.length; i++)
+            histogram[i] = 0;
+
+        for(int i=0; i<input.getWidth(); i++) {
+            for(int j=0; j<input.getHeight(); j++) {
+                int red = new Color(input.getRGB (i, j)).getRed();
+                histogram[red]++;
             }
-            ImageIO.write(binarized, "png",new File("blackwhiteimage") );
-            showBufferedImage(name, binarized);
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
+        return histogram;
+    }
+
+    /**
+     * Turns the image to a gray scaled one
+     * @param original
+     * @return
+     */
+    private static BufferedImage toGray(BufferedImage original) {
+
+        int alpha, red, green, blue;
+        int newPixel;
+
+        BufferedImage lum = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+
+        for(int i=0; i<original.getWidth(); i++) {
+            for(int j=0; j<original.getHeight(); j++) {
+
+                // Get pixels by R, G, B
+                alpha = new Color(original.getRGB(i, j)).getAlpha();
+                red = new Color(original.getRGB(i, j)).getRed();
+                green = new Color(original.getRGB(i, j)).getGreen();
+                blue = new Color(original.getRGB(i, j)).getBlue();
+
+                red = (int) (0.21 * red + 0.71 * green + 0.07 * blue);
+                // Return back to original format
+                newPixel = colorToRGB(alpha, red, red, red);
+
+                // Write pixels into image
+                lum.setRGB(i, j, newPixel);
+
+            }
         }
+        return lum;
+    }
+
+    /**
+     * Get the threshold used to turn the image to black and white
+     * @param original
+     * @return
+     */
+    private static int getThreshold(BufferedImage original) {
+
+        int[] histogram = imageHistogram(original);
+        int total = original.getHeight() * original.getWidth();
+
+        float sum = 0;
+        for(int i=0; i<256; i++) sum += i * histogram[i];
+
+        float sumB = 0;
+        int wB = 0;
+        int wF = 0;
+
+        float varMax = 0;
+        int threshold = 0;
+
+        for(int i=0 ; i<256 ; i++) {
+            wB += histogram[i];
+            if(wB == 0) continue;
+            wF = total - wB;
+
+            if(wF == 0) break;
+
+            sumB += (float) (i * histogram[i]);
+            float mB = sumB / wB;
+            float mF = (sum - sumB) / wF;
+
+            float varBetween = (float) wB * (float) wF * (mB - mF) * (mB - mF);
+
+            if(varBetween > varMax) {
+                varMax = varBetween;
+                threshold = i;
+            }
+        }
+
+        return threshold;
+    }
+
+    /**
+     * Turn the image to black and white only
+     * @param name
+     * @param original
+     * @return
+     */
+    private static BufferedImage binarize(String name, BufferedImage original) {
+        int red;
+        int newPixel;
+        int threshold = getThreshold(original);
+        BufferedImage binarized = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+
+        for(int i=0; i<original.getWidth(); i++) {
+            for(int j=0; j<original.getHeight(); j++) {
+
+                // Get pixels
+                red = new Color(original.getRGB(i, j)).getRed();
+                int alpha = new Color(original.getRGB(i, j)).getAlpha();
+                if(red > threshold) {
+                    newPixel = 255;
+                }
+                else {
+                    newPixel = 0;
+                }
+                newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
+                binarized.setRGB(i, j, newPixel);
+            }
+        }
+
+        showBufferedImage(name, binarized);
         return binarized;
     }
 
-    public static int colorToRGB(int alpha, int red, int green, int blue) {
+    /**
+     * Convert R, G, B, Alpha to standard 8 bit
+     * @param alpha
+     * @param red
+     * @param green
+     * @param blue
+     * @return
+     */
+    private static int colorToRGB(int alpha, int red, int green, int blue) {
+
         int newPixel = 0;
         newPixel += alpha;
         newPixel = newPixel << 8;
@@ -187,28 +302,6 @@ public class Main {
         newPixel += blue;
 
         return newPixel;
-    }
 
-    public static BufferedImage getGaussianBluredImage(String name, BufferedImage image){
-        float[] matrix = {
-                1/16f, 1/8f, 1/16f,
-                1/8f, 1/4f, 1/8f,
-                1/16f, 1/8f, 1/16f,
-        };
-
-        float[] matrix2 = {
-                1/273f, 4/273f, 7/273f, 4/273f, 1/273f,
-                4/273f, 16/273f, 26/273f, 16/273f, 4/273f,
-                7/273f, 26/273f, 41/273f, 26/273f, 7/273f,
-                4/273f, 16/273f, 26/273f, 16/273f, 4/273f,
-                1/273f, 4/273f, 7/273f, 4/273f, 1/273f,
-        };
-
-        BufferedImage original = image;
-        BufferedImageOp op = new ConvolveOp(new Kernel(3, 3, matrix), ConvolveOp.EDGE_NO_OP, null);
-        BufferedImage blurredImage = op.filter(original, null);
-
-        //showBufferedImage(name, blurredImage);
-        return blurredImage;
     }
 }

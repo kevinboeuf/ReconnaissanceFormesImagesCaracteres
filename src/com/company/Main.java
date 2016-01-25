@@ -13,8 +13,8 @@ import java.util.Map;
 public class Main {
 
     public static JFrame jframe = new JFrame();
-    public static Container pane = new Container();
-    public static ImagePanel imagePanel = new ImagePanel();
+    public static JScrollPane jScrollPane = new JScrollPane();
+    public static JPanel jPanel = new JPanel();
 
     public static void main(String[] args) {
 
@@ -24,7 +24,7 @@ public class Main {
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        HashMap <String, Image> imagesList = getImagesList(1, 2);
+        HashMap <String, Image> imagesList = getImagesList(1, 62);
 
         System.out.println("\t" + imagesList.size() + " images récupérées");
 
@@ -33,6 +33,9 @@ public class Main {
         for (Map.Entry<String, Image> entry : imagesList.entrySet()){
             BufferedImage grayscale = toGray(getGaussianBluredImage(entry.getValue().bufferedImage));
             BufferedImage binarized = binarize(entry.getKey(), grayscale);
+            if(isBackgroundWhite(binarized)){
+                entry.getValue().bufferedImage = invertImageColors(binarized);
+            }
         }
 
         BufferedImage image;
@@ -121,20 +124,19 @@ public class Main {
      * @return
      */
     public static void showBufferedImage(String title, BufferedImage image) {
-        jframe.setTitle(title);
-        imagePanel.setImage(image);
-        imagePanel.repaint();
+        jPanel.add(new JLabel(new ImageIcon(image)));
     }
 
     /**
      * Initialize the drawing frame
      */
     public static void initDrawingFrame(){
+        jScrollPane = new JScrollPane(jPanel);
+        jframe.add(jScrollPane);
+        jPanel.setLayout(new FlowLayout());
+
         jframe.setSize(250, 250);
         jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        imagePanel = new ImagePanel();
-        pane = jframe.getContentPane();
-        pane.add(imagePanel);
         jframe.setVisible(true);
     }
 
@@ -302,6 +304,45 @@ public class Main {
         newPixel += blue;
 
         return newPixel;
+    }
 
+    /**
+     * Return the color of the top left pixel
+     * @param image
+     * @return
+     */
+    public static int getTopLeftPixelColor(BufferedImage image){
+        return new Color(image.getRGB(0, 0)).getRed();
+    }
+
+    /**
+     * Return true if the background of the image is white
+     * @param image
+     * @return
+     */
+    public static boolean isBackgroundWhite(BufferedImage image){
+        boolean res = false;
+        if(getTopLeftPixelColor(image) == 255)
+            res = true;
+        return res;
+    }
+
+    public static BufferedImage invertImageColors(BufferedImage image){
+        BufferedImage result = image;
+        int color, newPixel = 255;
+        for (int i=0; i<image.getWidth(); i++){
+            for (int j=0; j<image.getHeight(); j++){
+                color = new Color(image.getRGB(i, j)).getRed();
+                int alpha = new Color(image.getRGB(i, j)).getAlpha();
+                if(color == 255){
+                    newPixel=0;
+                }else if(color == 0){
+                    newPixel=255;
+                }
+                newPixel = colorToRGB(alpha, newPixel, newPixel, newPixel);
+                result.setRGB(i, j, newPixel);
+            }
+        }
+        return result;
     }
 }

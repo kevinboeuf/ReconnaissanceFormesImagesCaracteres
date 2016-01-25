@@ -6,9 +6,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Main {
 
@@ -24,28 +22,28 @@ public class Main {
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        HashMap <String, Image> imagesList = getImagesList(1, 62);
+        ArrayList<Image> imagesList = getImagesList(1, 62);
 
         System.out.println("\t" + imagesList.size() + " images récupérées");
 
         //Show the images
         initDrawingFrame();
-        for (Map.Entry<String, Image> entry : imagesList.entrySet()){
-            BufferedImage grayscale = toGray(getGaussianBluredImage(entry.getValue().bufferedImage));
-            BufferedImage binarized = binarize(entry.getKey(), grayscale);
+        for (Image image : imagesList){
+            BufferedImage grayscale = toGray(getGaussianBluredImage(image.bufferedImage));
+            BufferedImage binarized = binarize(grayscale);
             if(isBackgroundWhite(binarized)){
-                entry.getValue().bufferedImage = invertImageColors(binarized);
+               image.bufferedImage = invertImageColors(binarized);
             }
         }
 
-        BufferedImage image;
+        BufferedImage bufferedImage;
 
         System.out.println("\n=== Extraction des attributs des images ===\n");
 
         //Extract the data
-        for (Map.Entry<String, Image> entry : imagesList.entrySet()){
-            image = entry.getValue().bufferedImage;
-            imageRelationAttributesList.add(getImageRelation(image, entry.getValue().imageClass));
+        for (Image image : imagesList){
+            bufferedImage = image.bufferedImage;
+            imageRelationAttributesList.add(getImageRelation(bufferedImage, image.imageClass));
         }
 
         //Generate the ARFF
@@ -96,10 +94,10 @@ public class Main {
      * @param endingIndex
      * @return
      */
-    public static HashMap<String, Image> getImagesList(int beginningIndex, int endingIndex){
-        HashMap <String, Image> imagesList = new HashMap <String, Image>();
+    public static ArrayList<Image> getImagesList(int beginningIndex, int endingIndex){
+        //HashMap <String, Image> imagesList = new HashMap <String, Image>();
+        ArrayList<Image> imagesList = new ArrayList<Image>();
         BufferedImage img = null;
-        List<String> results = null;
 
         for (int i = beginningIndex; i <= endingIndex; i++) {
             File[] files = new File(LocalConfiguration.FOLDER + "Sample" + String.format("%03d", i)).listFiles();
@@ -108,7 +106,8 @@ public class Main {
                     try {
                         img = ImageIO.read(file);
                         ImageClass imageClass = ImageClass.getImageClass("Sample" + String.format("%03d", i));
-                        imagesList.put(file.getName(), new Image(file.getName(), img, imageClass));
+                        //imagesList.put(file.getName(), new Image(file.getName(), img, imageClass));
+                        imagesList.add(new Image(file.getName(), img, imageClass));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -123,7 +122,7 @@ public class Main {
      * @param image
      * @return
      */
-    public static void showBufferedImage(String title, BufferedImage image) {
+    public static void showBufferedImage(BufferedImage image) {
         jPanel.add(new JLabel(new ImageIcon(image)));
     }
 
@@ -255,11 +254,10 @@ public class Main {
 
     /**
      * Turn the image to black and white only
-     * @param name
      * @param original
      * @return
      */
-    private static BufferedImage binarize(String name, BufferedImage original) {
+    private static BufferedImage binarize(BufferedImage original) {
         int red;
         int newPixel;
         int threshold = getThreshold(original);
@@ -282,7 +280,7 @@ public class Main {
             }
         }
 
-        showBufferedImage(name, binarized);
+        showBufferedImage(binarized);
         return binarized;
     }
 

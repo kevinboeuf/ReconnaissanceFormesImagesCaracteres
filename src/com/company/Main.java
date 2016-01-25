@@ -24,7 +24,7 @@ public class Main {
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        HashMap <String, Image> imagesList = getImagesList(12, 50);
+        HashMap <String, Image> imagesList = getImagesList(1, 3);
 
         System.out.println("\t" + imagesList.size() + " images récupérées");
 
@@ -205,7 +205,7 @@ public class Main {
         };
 
         BufferedImage original = image;
-        BufferedImageOp op = new ConvolveOp( new Kernel(3, 3, matrix) );
+        BufferedImageOp op = new ConvolveOp(new Kernel(3, 3, matrix), ConvolveOp.EDGE_NO_OP, null);
         BufferedImage blurredImage = op.filter(original, null);
 
         //showBufferedImage(name, blurredImage);

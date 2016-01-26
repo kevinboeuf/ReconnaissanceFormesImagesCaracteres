@@ -31,17 +31,17 @@ public class Main {
         initDrawingFrame();
         for (Image image : imagesList){
             BufferedImage grayscale = toGray(getGaussianBluredImage(image.bufferedImage));
-            BufferedImage binarized = binarize(grayscale);
-            if(isBackgroundWhite(binarized)){
-               binarized = invertImageColors(binarized);
-            }
-            BufferedImage binarizedNormalized = null;
+            BufferedImage normalized = null;
             try {
-                binarizedNormalized = getScaledImage(binarized, 60, 70);
+                normalized = getScaledImage(grayscale, 128, 128);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            showBufferedImage(binarizedNormalized);
+            BufferedImage binarized = binarize(normalized);
+            if(isBackgroundWhite(binarized)){
+                binarized = invertImageColors(binarized);
+            }
+            showBufferedImage(binarized);
         }
 
         BufferedImage bufferedImage;

@@ -288,7 +288,6 @@ public class Main {
             }
         }
 
-        //showBufferedImage(binarized);
         return binarized;
     }
 
@@ -313,15 +312,10 @@ public class Main {
     }
 
     /**
-     * Return the color of the top left pixel
+     * Return true if the background is white for the binarized image given as a parameter
      * @param image
      * @return
      */
-    public static int getTopLeftPixelColor(BufferedImage image){
-        return new Color(image.getRGB(0, 0)).getRed();
-    }
-
-
     public static boolean isBackgroundWhite(BufferedImage image) {
 
         boolean res = false;
@@ -364,6 +358,11 @@ public class Main {
         return res;
     }
 
+    /**
+     * Invert the colors or the binarized image
+     * @param image
+     * @return
+     */
     public static BufferedImage invertImageColors(BufferedImage image){
         BufferedImage result = image;
         int color, newPixel = 255;
@@ -383,6 +382,14 @@ public class Main {
         return result;
     }
 
+    /**
+     * Return a scaled image
+     * @param image
+     * @param width
+     * @param height
+     * @return
+     * @throws IOException
+     */
     public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {
         int imageWidth  = image.getWidth();
         int imageHeight = image.getHeight();

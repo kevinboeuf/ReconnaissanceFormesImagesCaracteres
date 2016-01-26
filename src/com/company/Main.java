@@ -3,6 +3,7 @@ package com.company;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -32,8 +33,15 @@ public class Main {
             BufferedImage grayscale = toGray(getGaussianBluredImage(image.bufferedImage));
             BufferedImage binarized = binarize(grayscale);
             if(isBackgroundWhite(binarized)){
-               image.bufferedImage = invertImageColors(binarized);
+               binarized = invertImageColors(binarized);
             }
+            BufferedImage binarizedNormalized = null;
+            try {
+                binarizedNormalized = getScaledImage(binarized, 60, 70);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            showBufferedImage(binarizedNormalized);
         }
 
         BufferedImage bufferedImage;
@@ -280,7 +288,7 @@ public class Main {
             }
         }
 
-        showBufferedImage(binarized);
+        //showBufferedImage(binarized);
         return binarized;
     }
 
@@ -313,15 +321,46 @@ public class Main {
         return new Color(image.getRGB(0, 0)).getRed();
     }
 
-    /**
-     * Return true if the background of the image is white
-     * @param image
-     * @return
-     */
-    public static boolean isBackgroundWhite(BufferedImage image){
+
+    public static boolean isBackgroundWhite(BufferedImage image) {
+
         boolean res = false;
-        if(getTopLeftPixelColor(image) == 255)
+        int blackPixelCount = 0;
+        int whitePixelCount = 0;
+        int imageWidth = image.getWidth();
+        int imageHeight = image.getHeight();
+
+        for(int i=0; i<imageWidth; i++){
+            if(new Color(image.getRGB(i, 0)).getRed() == 255){
+                whitePixelCount ++;
+            }else if (new Color(image.getRGB(i, 0)).getRed() == 0){
+                blackPixelCount ++;
+            }
+
+            if(new Color(image.getRGB(i, imageHeight-1)).getRed() == 255){
+                whitePixelCount ++;
+            }else if (new Color(image.getRGB(i, imageHeight-1)).getRed() == 0){
+                blackPixelCount ++;
+            }
+        }
+
+        for(int i=0; i<imageHeight; i++){
+            if(new Color(image.getRGB(0, i)).getRed() == 255){
+                whitePixelCount ++;
+            }else if (new Color(image.getRGB(0, i)).getRed() == 0){
+                blackPixelCount ++;
+            }
+
+            if(new Color(image.getRGB(imageWidth-1, i)).getRed() == 255){
+                whitePixelCount ++;
+            }else if (new Color(image.getRGB(imageWidth-1, i)).getRed() == 0){
+                blackPixelCount ++;
+            }
+        }
+
+        if (whitePixelCount >= blackPixelCount){
             res = true;
+        }
         return res;
     }
 
@@ -342,5 +381,19 @@ public class Main {
             }
         }
         return result;
+    }
+
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {
+        int imageWidth  = image.getWidth();
+        int imageHeight = image.getHeight();
+
+        double scaleX = (double)width/imageWidth;
+        double scaleY = (double)height/imageHeight;
+        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+        AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+
+        return bilinearScaleOp.filter(
+                image,
+                new BufferedImage(width, height, image.getType()));
     }
 }

@@ -28,10 +28,26 @@ public class ImageRelation {
     @RelationAnnotation(classe = ImageClass.class)
     ImageClass classe = ImageClass.A;
 
-    public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format, ImageClass classe) {
+    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
+    Integer topLeftPixelCount;
+
+    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
+    Integer topRightPixelCount;
+
+    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
+    Integer bottomLeftPixelCount;
+
+    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
+    Integer bottomRightPixelCount;
+
+    public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format, int topLeftPixelCount,  int topRightPixelCount, int bottomLeftPixelCount, int bottomRightPixelCount, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
+        this.topLeftPixelCount = topLeftPixelCount;
+        this.topRightPixelCount = topRightPixelCount;
+        this.bottomLeftPixelCount = bottomLeftPixelCount;
+        this.bottomRightPixelCount = bottomRightPixelCount;
         this.classe = classe;
     }
 
@@ -109,6 +125,11 @@ public class ImageRelation {
         Integer size = -1;
         Integer relevantSurface = -1;
         FormatAttribute format = FormatAttribute.SQUARE;
+        Integer topLeftPixelCount = -1;
+        Integer topRightPixelCount = -1;
+        Integer bottomLeftPixelCount = -1;
+        Integer bottomRightPixelCount = -1;
+
         ImageClass classe = ImageClass.A;
 
         public Builder() {
@@ -135,8 +156,24 @@ public class ImageRelation {
             return this;
         }
 
+        public void setCharacterTopLeftPixelCount(Integer characterTopLeftPixelCount) {
+            this.topLeftPixelCount = characterTopLeftPixelCount;
+        }
+
+        public void setCharacterTopRightPixelCount(Integer characterTopRightPixelCount) {
+            this.topRightPixelCount = characterTopRightPixelCount;
+        }
+
+        public void setCharacterBottomLeftPixelCount(Integer characterBottomLeftPixelCount) {
+            this.bottomLeftPixelCount = characterBottomLeftPixelCount;
+        }
+
+        public void setGetCharacterBottomRightPixelCount(Integer getCharacterBottomRightPixelCount) {
+            this.bottomRightPixelCount = getCharacterBottomRightPixelCount;
+        }
+
         public ImageRelation build(){
-            return new ImageRelation(size, relevantSurface, format, classe);
+            return new ImageRelation(size, relevantSurface, format, topLeftPixelCount, topRightPixelCount, bottomLeftPixelCount, bottomRightPixelCount, classe);
         }
 
     }

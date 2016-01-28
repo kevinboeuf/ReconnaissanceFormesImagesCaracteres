@@ -26,32 +26,43 @@ public class Main {
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        ArrayList<Image> imagesList = getImagesList(beginningIndex, endingIndex);
+        ArrayList<Image> originalImagesList = getImagesList(beginningIndex, endingIndex);
+        ArrayList<Image> grayImageList = new ArrayList<Image>();
+        ArrayList<Image> normalizedGrayImageList = new ArrayList<Image>();
         ArrayList<BufferedImage> masksList = getMasksList(beginningIndex, endingIndex);
-        ArrayList<BufferedImage> binarizedImageList = new ArrayList<BufferedImage>();
+        ArrayList<Image> binarizedImageList = new ArrayList<Image>();
+        ArrayList<Image> maskedBinarizedImageList = new ArrayList<Image>();
 
-        System.out.println("\t" + imagesList.size() + " images récupérées");
-
+        System.out.println("\t" + originalImagesList.size() + " images récupérées");
 
         //Show the images
         initDrawingFrame();
-        for (int i=0; i <imagesList.size(); i++){
-            BufferedImage grayscale = toGray(getGaussianBluredImage(imagesList.get(i).bufferedImage));
+        for (int i=0; i <originalImagesList.size(); i++){
+            String imageName = originalImagesList.get(i).name;
+            ImageClass imageClass = originalImagesList.get(i).imageClass;
+
+            BufferedImage grayscale = toGray(getGaussianBluredImage(originalImagesList.get(i).bufferedImage));
+            grayImageList.add(new Image(imageName, grayscale, imageClass));
             BufferedImage maskNormalized = null;
             BufferedImage normalized = null;
             try {
                 normalized = getScaledImage(grayscale, 128, 128);
                 maskNormalized = getScaledImage(masksList.get(i), 128, 128);
+                normalizedGrayImageList.add(new Image(imageName, normalized, imageClass));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             BufferedImage binarized = binarize(normalized);
             if(isBackgroundWhite(binarized)){
                 binarized = invertImageColors(binarized);
             }
+            binarizedImageList.add(new Image(imageName, binarized, imageClass));
             BufferedImage maskedBinarized = applyMask(binarized, maskNormalized);
-            binarizedImageList.add(maskedBinarized);
-            showRepartition(maskedBinarized);
+            maskedBinarizedImageList.add(new Image(imageName, maskedBinarized, imageClass));
+
+            //TODO : Rajouter le crop
+
             showBufferedImage(maskedBinarized);
         }
 
@@ -60,7 +71,7 @@ public class Main {
         System.out.println("\n=== Extraction des attributs des images ===\n");
 
         //Extract the data
-        for (Image image : imagesList){
+        for (Image image : maskedBinarizedImageList){
             bufferedImage = image.bufferedImage;
             imageRelationAttributesList.add(getImageRelation(bufferedImage, image.imageClass));
         }
@@ -71,14 +82,23 @@ public class Main {
         System.out.println("\tDone");
     }
 
-    
-
     public static ImageRelation getImageRelation(BufferedImage image, ImageClass imageClass){
         int size = getSize(image);
         FormatAttribute format = getFormat(image);
+        int[] pixelCount = getRepartition(image);
+        System.out.println(pixelCount[0] + " " + pixelCount[1] + " " + pixelCount[2] + " " + pixelCount[3]);
+        int topLeftPixelCount = pixelCount[0];
+        int topRightPixelCount = pixelCount[1];
+        int bottomLeftPixelCount = pixelCount[2];
+        int bottomRightPixelCount = pixelCount[3];
+
         ImageRelation.Builder builder = new ImageRelation.Builder();
         return builder.setSize(size)
                 .setFormat(format)
+                .setTopLeftPixelCount(topLeftPixelCount)
+                .setTopRightPixelCount(topRightPixelCount)
+                .setBottomLeftPixelCount(bottomLeftPixelCount)
+                .setBottomRightPixelCount(bottomRightPixelCount)
                 .setClasse(imageClass)
                 .build();
     }
@@ -466,7 +486,14 @@ public class Main {
         return res;
     }
 
-    public static void showRepartition (BufferedImage binarized){
+    /**
+     * Return the repartition of pixel
+     * @param binarized
+     * @return
+     */
+    public static int[] getRepartition (BufferedImage binarized){
+        int[] pixelCount = new int[4];
+
         int width = binarized.getWidth();
         int height = binarized.getHeight();
         int topLeftWhitePixelCount = 0;
@@ -499,8 +526,12 @@ public class Main {
                 }
             }
         }
+        pixelCount[0] = topLeftWhitePixelCount;
+        pixelCount[1] = topRightWhitePixelCount;
+        pixelCount[2] = bottomLeftWhitePixelCount;
+        pixelCount[3] = bottomRightWhitePixelCount;
 
-        System.out.println("Top left : " + topLeftWhitePixelCount + ", Top right : " + topRightWhitePixelCount + ", bottom left : " + bottomLeftWhitePixelCount + ", bottom right : " + bottomRightWhitePixelCount);
+        return pixelCount;
     }
 
 }

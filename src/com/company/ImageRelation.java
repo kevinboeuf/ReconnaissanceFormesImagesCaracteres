@@ -25,9 +25,6 @@ public class ImageRelation {
     @RelationAnnotation(type = SimpleAttributeType.STRING)
     FormatAttribute format;
 
-    @RelationAnnotation(classe = ImageClass.class)
-    ImageClass classe = ImageClass.A;
-
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
     Integer topLeftPixelCount;
 
@@ -39,6 +36,9 @@ public class ImageRelation {
 
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
     Integer bottomRightPixelCount;
+
+    @RelationAnnotation(classe = ImageClass.class)
+    ImageClass classe = ImageClass.A;
 
     public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format, int topLeftPixelCount,  int topRightPixelCount, int bottomLeftPixelCount, int bottomRightPixelCount, ImageClass classe) {
         this.size = size;
@@ -156,20 +156,24 @@ public class ImageRelation {
             return this;
         }
 
-        public void setCharacterTopLeftPixelCount(Integer characterTopLeftPixelCount) {
+        public ImageRelation.Builder setTopLeftPixelCount(Integer characterTopLeftPixelCount) {
             this.topLeftPixelCount = characterTopLeftPixelCount;
+            return this;
         }
 
-        public void setCharacterTopRightPixelCount(Integer characterTopRightPixelCount) {
+        public ImageRelation.Builder setTopRightPixelCount(Integer characterTopRightPixelCount) {
             this.topRightPixelCount = characterTopRightPixelCount;
+            return this;
         }
 
-        public void setCharacterBottomLeftPixelCount(Integer characterBottomLeftPixelCount) {
+        public ImageRelation.Builder setBottomLeftPixelCount(Integer characterBottomLeftPixelCount) {
             this.bottomLeftPixelCount = characterBottomLeftPixelCount;
+            return this;
         }
 
-        public void setGetCharacterBottomRightPixelCount(Integer getCharacterBottomRightPixelCount) {
+        public ImageRelation.Builder setBottomRightPixelCount(Integer getCharacterBottomRightPixelCount) {
             this.bottomRightPixelCount = getCharacterBottomRightPixelCount;
+            return this;
         }
 
         public ImageRelation build(){

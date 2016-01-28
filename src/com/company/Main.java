@@ -60,6 +60,8 @@ public class Main {
         System.out.println("\tDone");
     }
 
+    
+
     public static ImageRelation getImageRelation(BufferedImage image, ImageClass imageClass){
         int size = getSize(image);
         FormatAttribute format = getFormat(image);

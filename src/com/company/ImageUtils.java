@@ -1,19 +1,14 @@
 package com.company;
 
-import javafx.geometry.Point2D;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 
 public class ImageUtils {
 
@@ -100,8 +95,8 @@ public class ImageUtils {
         int[][] arrayImage = new int[image.getWidth()][image.getHeight()];
         int sum = 0;
 
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
+        for (int x = 0; x < image.getHeight(); x++) {
+            for (int y = 0; y < image.getWidth(); y++) {
                 if(image.getRGB(x, y) == Color.WHITE.getRGB()) {
                     arrayImage[x][y] = 255;
                     sum += 1;
@@ -114,80 +109,44 @@ public class ImageUtils {
         return arrayImage;
     }
 
-    public static Pixel getTopLeftMostCharacterPixelCoordinates(int[][] image) {
-        Pixel topLeftMost = new Pixel(0, 0);
-        boolean found = false;
-        for(int x = 0; x < image[0].length; x++) {
-            for(int y = 0; y < image.length; y++) {
-                if(image[y][x] == 0) {
-                    topLeftMost = new Pixel(y, x);
-                    found = true;
-                    break;
+    public static Rectangle getMatrixBoundaries(int[][] matrix, int characterColor) {
+        int height = matrix.length;
+        int width = matrix[0].length;
+        Rectangle rectangle = new Rectangle();
+        rectangle.top = new Pixel(0, height);
+        rectangle.left = new Pixel(width, 0);
+        rectangle.bottom = new Pixel(0, 0);
+        rectangle.right = new Pixel(0, 0);
+
+        for(int x = 0; x < matrix[0].length; x++) {
+            for(int y = 0; y < matrix.length; y++) {
+                if(matrix[x][y] == characterColor) {
+                    if(y < rectangle.top.y) {
+                        rectangle.top = new Pixel(x, y);
+                    }
+                    if(x < rectangle.left.x) {
+                        rectangle.left = new Pixel(x, y);
+                    }
+                    if(y > rectangle.bottom.y) {
+                        rectangle.bottom = new Pixel(x, y);
+                    }
+                    if(x > rectangle.right.x) {
+                        rectangle.right = new Pixel(x, y);
+                    }
                 }
             }
-            if(found) break;
         }
-        return topLeftMost;
-    }
-
-    public static Pixel getTopRightMostCharacterPixelCoordinates(int[][] image) {
-        Pixel topRightMost = new Pixel(0, 0);
-        boolean found = false;
-        for(int x = 0; x < image[0].length; x++) {
-            for(int y = image.length - 1; y >= 0; y--) {
-                if(image[y][x] == 0) {
-                    topRightMost = new Pixel(y, x);
-                    found = true;
-                    break;
-                }
-            }
-            if(found) break;
-        }
-        return topRightMost;
-    }
-
-    public static Pixel getBottomLeftMostCharacterPixelCoordinates(int[][] image) {
-        Pixel bottomLeftMost = new Pixel(0, 0);
-
-        boolean found = false;
-        for(int x = image[0].length - 1; x >= 0; x--) {
-            for(int y = 0; y < image.length; y++) {
-                if(image[y][x] == 0) {
-                    bottomLeftMost = new Pixel(y, x);
-                    found = true;
-                    break;
-                }
-            }
-            if(found) break;
-        }
-        return bottomLeftMost;
-    }
-
-    public static Pixel getBottomRightMostCharacterPixelCoordinates(int[][] image) {
-        Pixel bottomLeftMost = new Pixel(0, 0);
-
-        boolean found = false;
-        for(int x = image[0].length - 1; x >= 0; x--) {
-            for(int y = image.length - 1; y >=0; y--) {
-                if(image[y][x] == 0) {
-                    bottomLeftMost = new Pixel(y, x);
-                    found = true;
-                    break;
-                }
-            }
-            if(found) break;
-        }
-        return bottomLeftMost;
+        return rectangle;
     }
 
     public static BufferedImage drawImageFromMatrix(int[][] matrix, int BlackColor, int WhiteColor) {
-        int xLenght = matrix.length;
-        int yLength = matrix[0].length;
-        BufferedImage b = new BufferedImage(xLenght, yLength, BufferedImage.TYPE_BYTE_BINARY);
+        int yLenght = matrix.length;
+        int xLength = matrix[0].length;
+        BufferedImage b = new BufferedImage(xLength, yLenght, BufferedImage.TYPE_BYTE_BINARY);
 
-        for(int x = 0; x < xLenght; x++) {
-            for(int y = 0; y < yLength; y++) {
-                if(matrix[x][y] == WhiteColor) {
+        for(int x = 0; x < xLength; x++) {
+            for(int y = 0; y < yLenght; y++) {
+                if(matrix[y][x] == WhiteColor) {
                     b.setRGB(x, y, Color.WHITE.getRGB());
                 } else {
                     b.setRGB(x, y, Color.BLACK.getRGB());
@@ -197,6 +156,10 @@ public class ImageUtils {
         return b;
     }
 
+    public static BufferedImage cropImage(BufferedImage image, Rectangle rect) {
+        BufferedImage dest = image.getSubimage(rect.left.x, rect.top.y, rect.getWidth(), rect.getHeight());
+        return dest;
+    }
 
 
 

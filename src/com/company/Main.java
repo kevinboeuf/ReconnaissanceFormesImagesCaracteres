@@ -11,6 +11,9 @@ import java.util.List;
 
 public class Main {
 
+    public static final int beginningIndex = 1;
+    public static final int endingIndex = 62;
+
     public static JFrame jframe = new JFrame();
     public static JScrollPane jScrollPane = new JScrollPane();
     public static JPanel jPanel = new JPanel();
@@ -23,17 +26,22 @@ public class Main {
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        ArrayList<Image> imagesList = getImagesList(1, 62);
+        ArrayList<Image> imagesList = getImagesList(beginningIndex, endingIndex);
+        ArrayList<BufferedImage> masksList = getMasksList(beginningIndex, endingIndex);
+        ArrayList<BufferedImage> binarizedImageList = new ArrayList<BufferedImage>();
 
         System.out.println("\t" + imagesList.size() + " images récupérées");
 
+
         //Show the images
         initDrawingFrame();
-        for (Image image : imagesList){
-            BufferedImage grayscale = toGray(getGaussianBluredImage(image.bufferedImage));
+        for (int i=0; i <imagesList.size(); i++){
+            BufferedImage grayscale = toGray(getGaussianBluredImage(imagesList.get(i).bufferedImage));
+            BufferedImage maskNormalized = null;
             BufferedImage normalized = null;
             try {
                 normalized = getScaledImage(grayscale, 128, 128);
+                maskNormalized = getScaledImage(masksList.get(i), 128, 128);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -41,7 +49,10 @@ public class Main {
             if(isBackgroundWhite(binarized)){
                 binarized = invertImageColors(binarized);
             }
-            showBufferedImage(binarized);
+            BufferedImage maskedBinarized = applyMask(binarized, maskNormalized);
+            binarizedImageList.add(maskedBinarized);
+            showRepartition(maskedBinarized);
+            showBufferedImage(maskedBinarized);
         }
 
         BufferedImage bufferedImage;
@@ -105,7 +116,6 @@ public class Main {
      * @return
      */
     public static ArrayList<Image> getImagesList(int beginningIndex, int endingIndex){
-        //HashMap <String, Image> imagesList = new HashMap <String, Image>();
         ArrayList<Image> imagesList = new ArrayList<Image>();
         BufferedImage img = null;
 
@@ -116,8 +126,33 @@ public class Main {
                     try {
                         img = ImageIO.read(file);
                         ImageClass imageClass = ImageClass.getImageClass("Sample" + String.format("%03d", i));
-                        //imagesList.put(file.getName(), new Image(file.getName(), img, imageClass));
                         imagesList.add(new Image(file.getName(), img, imageClass));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return imagesList;
+    }
+
+    /**
+     * Reads all the images from the constant folder and returns it as a list of BufferedImages
+     * @param beginningIndex
+     * @param endingIndex
+     * @return
+     */
+    public static ArrayList<BufferedImage> getMasksList(int beginningIndex, int endingIndex){
+        ArrayList<BufferedImage> imagesList = new ArrayList<BufferedImage>();
+        BufferedImage img = null;
+
+        for (int i = beginningIndex; i <= endingIndex; i++) {
+            File[] files = new File(LocalConfiguration.MASKFOLDER + "Sample" + String.format("%03d", i)).listFiles();
+            for (File file : files) {
+                if (file.isFile()) {
+                    try {
+                        img = ImageIO.read(file);
+                        imagesList.add(img);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -289,7 +324,6 @@ public class Main {
                 binarized.setRGB(i, j, newPixel);
             }
         }
-
         return binarized;
     }
 
@@ -405,4 +439,68 @@ public class Main {
                 image,
                 new BufferedImage(width, height, image.getType()));
     }
+
+    /**
+     * Apply a mask to an image and return the result
+     * @param image
+     * @param mask
+     * @return
+     */
+    public static BufferedImage applyMask(BufferedImage image, BufferedImage mask){
+        int width = image.getWidth();
+        int height = image.getHeight();
+        BufferedImage res = image;
+        BufferedImage appliedMask = mask;
+        int imageColor;
+        int maskColor;
+
+        for (int i = 0; i < height; i++){
+            for (int j = 0; j < width; j++){
+                imageColor = new Color(res.getRGB(i, j)).getRed();
+                maskColor = new Color(appliedMask.getRGB(i, j)).getRed();
+                if(!(imageColor == 255 && maskColor == 255)){
+                    res.setRGB(i, j, 0);
+                }
+            }
+        }
+        return res;
+    }
+
+    public static void showRepartition (BufferedImage binarized){
+        int width = binarized.getWidth();
+        int height = binarized.getHeight();
+        int topLeftWhitePixelCount = 0;
+        int topRightWhitePixelCount = 0;
+        int bottomLeftWhitePixelCount = 0;
+        int bottomRightWhitePixelCount = 0;
+
+        for (int i=0; i<(width/2); i++){
+            for (int j=0; j<(height/2); j++){
+                if(new Color(binarized.getRGB(i, j)).getRed() == 255){
+                    topLeftWhitePixelCount++;
+                }
+            }
+            for (int k=(height/2); k<height; k++){
+                if(new Color(binarized.getRGB(i, k)).getRed() == 255) {
+                    bottomLeftWhitePixelCount++;
+                }
+            }
+        }
+
+        for (int i=(width/2); i<width; i++){
+            for (int j=0; j<(height/2); j++){
+                if(new Color(binarized.getRGB(i, j)).getRed() == 255) {
+                    topRightWhitePixelCount++;
+                }
+            }
+            for (int k=(height/2); k<height; k++){
+                if(new Color(binarized.getRGB(i, k)).getRed() == 255){
+                    bottomRightWhitePixelCount++;
+                }
+            }
+        }
+
+        System.out.println("Top left : " + topLeftWhitePixelCount + ", Top right : " + topRightWhitePixelCount + ", bottom left : " + bottomLeftWhitePixelCount + ", bottom right : " + bottomRightWhitePixelCount);
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.company;
+package com.company.database;
 
 import com.company.model.ImageClass;
 

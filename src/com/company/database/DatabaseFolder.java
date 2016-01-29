@@ -1,12 +1,8 @@
-package com.company;
+package com.company.database;
 
 import com.company.model.ImageClass;
-import com.company.model.SDDImage;
-import com.company.utils.ImageUtils;
 
-import javax.imageio.ImageIO;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class DatabaseFolder {

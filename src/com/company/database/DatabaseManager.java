@@ -1,5 +1,6 @@
-package com.company;
+package com.company.database;
 
+import com.company.LocalConfiguration;
 import com.company.model.ImageClass;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ public class DatabaseManager {
 
     public static final String IMAGE_PATH = LocalConfiguration.FOLDER;
     public static final String MASK_PATH = LocalConfiguration.MASKFOLDER;
-    ArrayList<DatabaseItem> databaseItems = new ArrayList<>();
+    public ArrayList<DatabaseItem> databaseItems = new ArrayList<>();
 
     public DatabaseManager() {
 

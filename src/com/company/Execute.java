@@ -1,9 +1,10 @@
 package com.company;
 
 import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 
+import com.company.database.DatabaseItem;
+import com.company.database.DatabaseManager;
 import com.company.model.*;
 import com.company.model.Image;
 import com.company.model.Rectangle;

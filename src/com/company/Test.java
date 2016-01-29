@@ -1,5 +1,8 @@
 package com.company;
 
+import com.company.utils.ImagePanel;
+import com.company.utils.ImageUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.*;
@@ -32,7 +35,7 @@ public class Test {
         ImageUtils.showBufferedImage(testImage);
         int[][] matrix = ImageUtils.getImagePixels(testImage);
 
-        Rectangle rectangle = ImageUtils.getMatrixBoundaries(matrix, 255);
+        com.company.model.Rectangle rectangle = ImageUtils.getMatrixBoundaries(matrix, 255);
 
         System.out.println(rectangle.top.toString());
         System.out.println(rectangle.left.toString());

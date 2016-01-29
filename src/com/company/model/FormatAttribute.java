@@ -1,4 +1,4 @@
-package com.company;
+package com.company.model;
 
 public enum FormatAttribute {
     HORIZONTAL_RECTANGLE("horizontal-rectangle"),

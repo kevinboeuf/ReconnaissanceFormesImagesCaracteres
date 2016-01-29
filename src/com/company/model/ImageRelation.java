@@ -1,6 +1,7 @@
-package com.company;
+package com.company.model;
 
-import java.awt.*;
+import com.company.utils.StringUtils;
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -62,7 +63,7 @@ public class ImageRelation {
     }
 
     /**
-     * Génère un fichier arff de cette classe avec la liste de données fournie
+     * Génère un fichier arff de cette path avec la liste de données fournie
      * @param imageRelationList
      */
     public static void generateARFF(List<ImageRelation> imageRelationList) {
@@ -97,7 +98,7 @@ public class ImageRelation {
                     writer.println("@ATTRIBUTE " + field.getName() + " " + relationAnnotation.type());
                 } else if(relationAnnotation.classe() != Enum.class) {
                     Enum[] enumTypes = relationAnnotation.classe().getEnumConstants();
-                    writer.println("@ATTRIBUTE class {"+StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
+                    writer.println("@ATTRIBUTE class {"+ StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
                 }
             }
         }

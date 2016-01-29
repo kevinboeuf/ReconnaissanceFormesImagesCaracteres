@@ -1,9 +1,9 @@
-package com.company;
+package com.company.model;
 
 public class Pixel {
 
-    int x = 0;
-    int y = 0;
+    public int x = 0;
+    public int y = 0;
 
     public Pixel(int mx, int my) {
         x = mx;

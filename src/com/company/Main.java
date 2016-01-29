@@ -1,5 +1,10 @@
 package com.company;
 
+import com.company.model.FormatAttribute;
+import com.company.model.ImageClass;
+import com.company.model.ImageRelation;
+import com.company.model.SDDImage;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -19,19 +24,19 @@ public class Main {
     public static JPanel jPanel = new JPanel();
 
     public static void main(String[] args) {
-
+/*
         System.out.println("\n=== Récupération des images ===\n");
 
         System.out.println("\tDossier d'images : " + LocalConfiguration.FOLDER);
 
         //Get the list of images
         List<ImageRelation> imageRelationAttributesList = new ArrayList<ImageRelation>();
-        ArrayList<Image> originalImagesList = getImagesList(beginningIndex, endingIndex);
-        ArrayList<Image> grayImageList = new ArrayList<Image>();
-        ArrayList<Image> normalizedGrayImageList = new ArrayList<Image>();
+        ArrayList<SDDImage> originalImagesList = getImagesList(beginningIndex, endingIndex);
+        ArrayList<SDDImage> graySDDImageList = new ArrayList<SDDImage>();
+        ArrayList<SDDImage> normalizedGraySDDImageList = new ArrayList<SDDImage>();
         ArrayList<BufferedImage> masksList = getMasksList(beginningIndex, endingIndex);
-        ArrayList<Image> binarizedImageList = new ArrayList<Image>();
-        ArrayList<Image> maskedBinarizedImageList = new ArrayList<Image>();
+        ArrayList<SDDImage> binarizedSDDImageList = new ArrayList<SDDImage>();
+        ArrayList<SDDImage> maskedBinarizedSDDImageList = new ArrayList<SDDImage>();
 
         System.out.println("\t" + originalImagesList.size() + " images récupérées");
 
@@ -42,24 +47,24 @@ public class Main {
             ImageClass imageClass = originalImagesList.get(i).imageClass;
 
             BufferedImage grayscale = toGray(getGaussianBluredImage(originalImagesList.get(i).bufferedImage));
-            grayImageList.add(new Image(imageName, grayscale, imageClass));
+            graySDDImageList.add(new SDDImage(imageName, grayscale, imageClass));
             BufferedImage maskNormalized = null;
             BufferedImage normalized = null;
             try {
                 normalized = getScaledImage(grayscale, 128, 128);
                 maskNormalized = getScaledImage(masksList.get(i), 128, 128);
-                normalizedGrayImageList.add(new Image(imageName, normalized, imageClass));
+                normalizedGraySDDImageList.add(new SDDImage(imageName, normalized, imageClass));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            BufferedImage binarized = binarize(normalized);
+            BufferedImage binarized = getBynaryImage(normalized);
             if(isBackgroundWhite(binarized)){
                 binarized = invertImageColors(binarized);
             }
-            binarizedImageList.add(new Image(imageName, binarized, imageClass));
+            binarizedSDDImageList.add(new SDDImage(imageName, binarized, imageClass));
             BufferedImage maskedBinarized = applyMask(binarized, maskNormalized);
-            maskedBinarizedImageList.add(new Image(imageName, maskedBinarized, imageClass));
+            maskedBinarizedSDDImageList.add(new SDDImage(imageName, maskedBinarized, imageClass));
 
             //TODO : Rajouter le crop
 
@@ -71,9 +76,9 @@ public class Main {
         System.out.println("\n=== Extraction des attributs des images ===\n");
 
         //Extract the data
-        for (Image image : maskedBinarizedImageList){
-            bufferedImage = image.bufferedImage;
-            imageRelationAttributesList.add(getImageRelation(bufferedImage, image.imageClass));
+        for (SDDImage SDDImage : maskedBinarizedSDDImageList){
+            bufferedImage = SDDImage.bufferedImage;
+            imageRelationAttributesList.add(getImageRelation(bufferedImage, SDDImage.imageClass));
         }
 
         //Generate the ARFF
@@ -103,20 +108,12 @@ public class Main {
                 .build();
     }
 
-    /**
-     * Get the size of an image
-     * @param image
-     * @return
-     */
+
     public static int getSize(BufferedImage image){
         return image.getWidth()*image.getHeight();
     }
 
-    /**
-     * Get the format of the image
-     * @param image
-     * @return
-     */
+
     public static FormatAttribute getFormat(BufferedImage image){
         int height = image.getHeight();
         int width = image.getWidth();
@@ -129,14 +126,8 @@ public class Main {
         return format;
     }
 
-    /**
-     * Reads all the images from the constant folder and returns it as a list of BufferedImages
-     * @param beginningIndex
-     * @param endingIndex
-     * @return
-     */
-    public static ArrayList<Image> getImagesList(int beginningIndex, int endingIndex){
-        ArrayList<Image> imagesList = new ArrayList<Image>();
+    public static ArrayList<SDDImage> getImagesList(int beginningIndex, int endingIndex){
+        ArrayList<SDDImage> imagesList = new ArrayList<SDDImage>();
         BufferedImage img = null;
 
         for (int i = beginningIndex; i <= endingIndex; i++) {
@@ -146,7 +137,7 @@ public class Main {
                     try {
                         img = ImageIO.read(file);
                         ImageClass imageClass = ImageClass.getImageClass("Sample" + String.format("%03d", i));
-                        imagesList.add(new Image(file.getName(), img, imageClass));
+                        imagesList.add(new SDDImage(file.getName(), img, imageClass));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -156,12 +147,7 @@ public class Main {
         return imagesList;
     }
 
-    /**
-     * Reads all the images from the constant folder and returns it as a list of BufferedImages
-     * @param beginningIndex
-     * @param endingIndex
-     * @return
-     */
+
     public static ArrayList<BufferedImage> getMasksList(int beginningIndex, int endingIndex){
         ArrayList<BufferedImage> imagesList = new ArrayList<BufferedImage>();
         BufferedImage img = null;
@@ -182,18 +168,12 @@ public class Main {
         return imagesList;
     }
 
-    /**
-     * displays an image
-     * @param image
-     * @return
-     */
+
     public static void showBufferedImage(BufferedImage image) {
         jPanel.add(new JLabel(new ImageIcon(image)));
     }
 
-    /**
-     * Initialize the drawing frame
-     */
+
     public static void initDrawingFrame(){
         jScrollPane = new JScrollPane(jPanel);
         jframe.add(jScrollPane);
@@ -204,11 +184,7 @@ public class Main {
         jframe.setVisible(true);
     }
 
-    /**
-     * Return an image with an applied Gaussian Blur
-     * @param image
-     * @return
-     */
+
    public static BufferedImage getGaussianBluredImage(BufferedImage image){
         float[] matrix = {
                 1/16f, 1/8f, 1/16f,
@@ -223,9 +199,7 @@ public class Main {
        return blurredImage;
     }
 
-    /**
-     * Returns the histogram of the image
-     */
+
    public static int[] imageHistogram(BufferedImage input) {
 
         int[] histogram = new int[256];
@@ -242,11 +216,7 @@ public class Main {
         return histogram;
     }
 
-    /**
-     * Turns the image to a gray scaled one
-     * @param original
-     * @return
-     */
+
     private static BufferedImage toGray(BufferedImage original) {
 
         int alpha, red, green, blue;
@@ -275,11 +245,7 @@ public class Main {
         return lum;
     }
 
-    /**
-     * Get the threshold used to turn the image to black and white
-     * @param original
-     * @return
-     */
+
     private static int getThreshold(BufferedImage original) {
 
         int[] histogram = imageHistogram(original);
@@ -317,12 +283,8 @@ public class Main {
         return threshold;
     }
 
-    /**
-     * Turn the image to black and white only
-     * @param original
-     * @return
-     */
-    private static BufferedImage binarize(BufferedImage original) {
+
+    private static BufferedImage getBynaryImage(BufferedImage original) {
         int red;
         int newPixel;
         int threshold = getThreshold(original);
@@ -347,14 +309,7 @@ public class Main {
         return binarized;
     }
 
-    /**
-     * Convert R, G, B, Alpha to standard 8 bit
-     * @param alpha
-     * @param red
-     * @param green
-     * @param blue
-     * @return
-     */
+
     private static int colorToRGB(int alpha, int red, int green, int blue) {
 
         int newPixel = 0;
@@ -367,11 +322,7 @@ public class Main {
         return newPixel;
     }
 
-    /**
-     * Return true if the background is white for the binarized image given as a parameter
-     * @param image
-     * @return
-     */
+
     public static boolean isBackgroundWhite(BufferedImage image) {
 
         boolean res = false;
@@ -414,11 +365,7 @@ public class Main {
         return res;
     }
 
-    /**
-     * Invert the colors or the binarized image
-     * @param image
-     * @return
-     */
+
     public static BufferedImage invertImageColors(BufferedImage image){
         BufferedImage result = image;
         int color, newPixel = 255;
@@ -438,14 +385,7 @@ public class Main {
         return result;
     }
 
-    /**
-     * Return a scaled image
-     * @param image
-     * @param width
-     * @param height
-     * @return
-     * @throws IOException
-     */
+
     public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {
         int imageWidth  = image.getWidth();
         int imageHeight = image.getHeight();
@@ -460,12 +400,7 @@ public class Main {
                 new BufferedImage(width, height, image.getType()));
     }
 
-    /**
-     * Apply a mask to an image and return the result
-     * @param image
-     * @param mask
-     * @return
-     */
+
     public static BufferedImage applyMask(BufferedImage image, BufferedImage mask){
         int width = image.getWidth();
         int height = image.getHeight();
@@ -486,11 +421,7 @@ public class Main {
         return res;
     }
 
-    /**
-     * Return the repartition of pixel
-     * @param binarized
-     * @return
-     */
+
     public static int[] getRepartition (BufferedImage binarized){
         int[] pixelCount = new int[4];
 
@@ -533,5 +464,5 @@ public class Main {
 
         return pixelCount;
     }
-
+*/}
 }

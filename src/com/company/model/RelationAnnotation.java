@@ -1,10 +1,10 @@
-package com.company;
+package com.company.model;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import com.company.ImageRelation.*;
+import com.company.model.ImageRelation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

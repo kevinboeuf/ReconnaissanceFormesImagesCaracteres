@@ -54,7 +54,7 @@ public class Execute {
              showImagesList();
              computeImagesListRelations();
         } else if(testNumber == 2) {
-             databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
+             databaseManager.selectRange(ImageClass.ZERO, ImageClass.NEUF);
              loadImagesList();
              applyGaussianBlur();
              applyGrayScale();

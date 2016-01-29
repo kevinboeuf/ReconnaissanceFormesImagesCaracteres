@@ -20,10 +20,10 @@ public class ImageRelation {
 
     // Surface concerned by the character
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    Integer relevantSurface;
+    Double relevantSurface;
 
     // Horizontal / Vertical rectangle or square
-    @RelationAnnotation(type = SimpleAttributeType.STRING)
+    @RelationAnnotation(complexType = FormatAttribute.class)
     FormatAttribute format;
 
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
@@ -41,7 +41,7 @@ public class ImageRelation {
     @RelationAnnotation(classe = ImageClass.class)
     ImageClass classe = ImageClass.A;
 
-    public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format, float topLeftPixelRatio,  float topRightPixelRatio, float bottomLeftPixelRatio, float bottomRightPixelRatio, ImageClass classe) {
+    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, float topLeftPixelRatio,  float topRightPixelRatio, float bottomLeftPixelRatio, float bottomRightPixelRatio, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
@@ -93,11 +93,15 @@ public class ImageRelation {
 
                 Annotation annotation = field.getAnnotation(RelationAnnotation.class);
                 RelationAnnotation relationAnnotation = (RelationAnnotation) annotation;
+                Enum[] enumTypes;
 
-                if(!relationAnnotation.type().equals(SimpleAttributeType.NONE)){
+                if(!relationAnnotation.complexType().equals(Enum.class)) {
+                    enumTypes = relationAnnotation.complexType().getEnumConstants();
+                    writer.println("@ATTRIBUTE " + field.getName() + " {"+ StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
+                } else if(!relationAnnotation.type().equals(SimpleAttributeType.NONE)){
                     writer.println("@ATTRIBUTE " + field.getName() + " " + relationAnnotation.type());
                 } else if(relationAnnotation.classe() != Enum.class) {
-                    Enum[] enumTypes = relationAnnotation.classe().getEnumConstants();
+                    enumTypes = relationAnnotation.classe().getEnumConstants();
                     writer.println("@ATTRIBUTE class {"+ StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
                 }
             }
@@ -124,7 +128,7 @@ public class ImageRelation {
     public static class Builder{
 
         Integer size = -1;
-        Integer relevantSurface = -1;
+        Double relevantSurface = 0.0;
         FormatAttribute format = FormatAttribute.SQUARE;
         float topLeftPixelRatio = -1;
         float topRightPixelRatio = -1;
@@ -142,7 +146,7 @@ public class ImageRelation {
             return this;
         }
 
-        public ImageRelation.Builder setRelevantSurface(Integer relevantSurface) {
+        public ImageRelation.Builder setRelevantSurface(Double relevantSurface) {
             this.relevantSurface = relevantSurface;
             return this;
         }

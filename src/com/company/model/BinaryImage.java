@@ -197,4 +197,18 @@ public class BinaryImage extends Image implements Cloneable {
 
         return pixelCount;
     }
+
+    public int[] countPixelsByColors() {
+        int[] result = {0, 0};
+        for(int y = 0; y < getHeight(); y++) {
+            for(int x = 0; x < getWidth(); x++) {
+                if(bufferedImage.getRGB(x, y) == characterColor.getRGB()) {
+                    result[0] = result[0] + 1;
+                } else {
+                    result[1] = result[1] + 1;
+                }
+            }
+        }
+        return result;
+    }
 }

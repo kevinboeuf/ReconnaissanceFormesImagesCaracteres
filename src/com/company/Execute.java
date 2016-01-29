@@ -32,24 +32,24 @@ public class Execute {
              loadImagesList();
              applyGaussianBlur();
              applyGrayScale();
-             showImagesList();
+             //showImagesList();
              applyScale(scaleWidth, scaleHeight);
              applyBinarization(characterColor, backgroundColor);
              applyImageColor();
              applyMask(true);
-             showImagesList();
+             //showImagesList();
              applyCrop();
-             showImagesList();
+             //showImagesList();
              computeImagesListRelations();
          } else if(testNumber == 1) {
-             databaseManager.select(ImageClass.TROIS).select(ImageClass.HUIT);
+             databaseManager.selectRange(ImageClass.ZERO, ImageClass.NEUF);
              loadImagesList();
              applyGaussianBlur();
              applyGrayScale();
+             applyScale(scaleWidth, scaleHeight);
              applyBinarization(characterColor, backgroundColor);
              applyImageColor();
-             applyMask(false);
-             applyScale(scaleWidth, scaleHeight);
+             applyMask(true);
              applyCrop();
              showImagesList();
              computeImagesListRelations();
@@ -157,7 +157,8 @@ public class Execute {
 
     public static ImageRelation getImageRelation(SDDImage SDDImage) {
         int size = SDDImage.image.getSize();
-        FormatAttribute format = getFormat(SDDImage, 0.05);
+        double relevantSurface = getRelevantSurface(SDDImage);
+        FormatAttribute format = getFormat(SDDImage, 0.20);
         float[] pixelCount = ((BinaryImage)SDDImage.image).getRepartition(characterColor.getRGB());
         float topLeftPixelCount = pixelCount[0];
         float topRightPixelCount = pixelCount[1];
@@ -167,6 +168,7 @@ public class Execute {
         ImageRelation.Builder builder = new ImageRelation.Builder();
         return builder.setSize(size)
                 .setFormat(format)
+                .setRelevantSurface(relevantSurface)
                 .setTopLeftPixelCount(topLeftPixelCount)
                 .setTopRightPixelCount(topRightPixelCount)
                 .setBottomLeftPixelCount(bottomLeftPixelCount)
@@ -188,6 +190,12 @@ public class Execute {
             format = FormatAttribute.HORIZONTAL_RECTANGLE;
         }
         return format;
+    }
+
+    public static double getRelevantSurface(SDDImage sddImage) {
+        int[] colorsCount = ((BinaryImage)sddImage.image).countPixelsByColors();
+        double surface = (float)colorsCount[0] / ((float)colorsCount[0] + (float)colorsCount[1]);
+        return surface;
     }
 
 }

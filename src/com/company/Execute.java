@@ -22,61 +22,9 @@ public class Execute {
     public static ArrayList<ImageRelation>  imagesListRelations = new ArrayList<ImageRelation>();
     public static DatabaseManager databaseManager = new DatabaseManager();
 
-    public static void main(String[] args) {
-        runTest(1);
-    }
+    public static void main(String[] args) {}
 
     public static void runTest(int testNumber) {
-         if(testNumber == 0) {
-             databaseManager.selectAll();
-             loadImagesList();
-             applyGaussianBlur();
-             applyGrayScale();
-             //showImagesList();
-             applyScale(scaleWidth, scaleHeight);
-             applyBinarization(characterColor, backgroundColor);
-             applyImageColor();
-             applyMask(true);
-             //showImagesList();
-             applyCrop();
-             //showImagesList();
-             computeImagesListRelations();
-         } else if(testNumber == 1) {
-             databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
-             loadImagesList();
-             applyGaussianBlur();
-             applyGrayScale();
-             applyScale(scaleWidth, scaleHeight);
-             applyBinarization(characterColor, backgroundColor);
-             applyImageColor();
-             applyMask(true);
-             applyCrop();
-             showImagesList();
-             computeImagesListRelations();
-        } else if(testNumber == 2) {
-             databaseManager.selectRange(ImageClass.ZERO, ImageClass.NEUF);
-             loadImagesList();
-             applyGaussianBlur();
-             applyGrayScale();
-             applyScale(scaleWidth, scaleHeight);
-             applyBinarization(characterColor, backgroundColor);
-             applyImageColor();
-             applyMask(true);
-             applyCrop();
-             showImagesList();
-             computeImagesListRelations();
-        } else if(testNumber == 3) {
-             databaseManager.selectCustom(LocalConfiguration.ROOT_DIRECTORY + "vert.png", "vert", ImageClass.I, "");
-             loadImagesList();
-             applyGaussianBlur();
-             applyGrayScale();
-             applyScale(scaleWidth, scaleHeight);
-             applyBinarization(characterColor, backgroundColor);
-             applyImageColor();
-             applyCrop();
-             showImagesList();
-             computeImagesListRelations();
-        }
     }
 
     public static void loadImagesList(){

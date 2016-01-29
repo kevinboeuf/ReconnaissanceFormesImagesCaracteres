@@ -20,7 +20,7 @@ public class Execute {
 
     public static ArrayList<SDDImage>  imagesList = new ArrayList<SDDImage>();
     public static ArrayList<ImageRelation>  imagesListRelations = new ArrayList<ImageRelation>();
-    private static DatabaseManager databaseManager = new DatabaseManager();
+    public static DatabaseManager databaseManager = new DatabaseManager();
 
     public static void main(String[] args) {
         runTest(1);
@@ -42,7 +42,7 @@ public class Execute {
              //showImagesList();
              computeImagesListRelations();
          } else if(testNumber == 1) {
-             databaseManager.selectRange(ImageClass.ZERO, ImageClass.NEUF);
+             databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
              loadImagesList();
              applyGaussianBlur();
              applyGrayScale();
@@ -62,6 +62,17 @@ public class Execute {
              applyBinarization(characterColor, backgroundColor);
              applyImageColor();
              applyMask(true);
+             applyCrop();
+             showImagesList();
+             computeImagesListRelations();
+        } else if(testNumber == 3) {
+             databaseManager.selectCustom(LocalConfiguration.ROOT_DIRECTORY + "vert.png", "vert", ImageClass.I, "");
+             loadImagesList();
+             applyGaussianBlur();
+             applyGrayScale();
+             applyScale(scaleWidth, scaleHeight);
+             applyBinarization(characterColor, backgroundColor);
+             applyImageColor();
              applyCrop();
              showImagesList();
              computeImagesListRelations();
@@ -164,6 +175,8 @@ public class Execute {
         float topRightPixelCount = pixelCount[1];
         float bottomLeftPixelCount = pixelCount[2];
         float bottomRightPixelCount = pixelCount[3];
+        int horizontalCharacterLines = getHorizontalCharacterLines(SDDImage);
+        int verticalCharacterLines = getVerticalCharacterLines(SDDImage);
 
         ImageRelation.Builder builder = new ImageRelation.Builder();
         return builder.setSize(size)
@@ -173,6 +186,8 @@ public class Execute {
                 .setTopRightPixelCount(topRightPixelCount)
                 .setBottomLeftPixelCount(bottomLeftPixelCount)
                 .setBottomRightPixelCount(bottomRightPixelCount)
+                .setHorizontalCharacterLines(horizontalCharacterLines)
+                .setVerticalCharacterLines(verticalCharacterLines)
                 .setClasse(SDDImage.imageClass)
                 .build();
     }
@@ -196,6 +211,20 @@ public class Execute {
         int[] colorsCount = ((BinaryImage)sddImage.image).countPixelsByColors();
         double surface = (float)colorsCount[0] / ((float)colorsCount[0] + (float)colorsCount[1]);
         return surface;
+    }
+
+    public static int getHorizontalCharacterLines(SDDImage sddImage) {
+        return sddImage.image.getCharacterColorAreasAlongLine(
+                sddImage.image.getLeftMiddlePixel(),
+                sddImage.image.getRightMiddlePixel()
+        );
+    }
+
+    public static int getVerticalCharacterLines(SDDImage sddImage) {
+        return sddImage.image.getCharacterColorAreasAlongLine(
+                sddImage.image.getTopMiddlePixel(),
+                sddImage.image.getBottomMiddlePixel()
+        );
     }
 
 }

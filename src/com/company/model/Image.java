@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class Image implements Cloneable {
@@ -281,5 +282,73 @@ public class Image implements Cloneable {
             rectangle.right = new Pixel(bufferedImage.getWidth() - 1, 0);
         }
         return rectangle;
+    }
+
+    public Pixel getBottomMiddlePixel() {
+        return new Pixel(bufferedImage.getWidth() / 2, bufferedImage.getHeight() - 1);
+    }
+
+    public Pixel getTopMiddlePixel() {
+        return new Pixel(bufferedImage.getWidth() / 2, 0);
+    }
+
+    public Pixel getLeftMiddlePixel() {
+        return new Pixel(0, bufferedImage.getHeight() / 2);
+    }
+
+    public Pixel getRightMiddlePixel() {
+        return new Pixel(bufferedImage.getWidth() - 1, bufferedImage.getHeight() / 2);
+    }
+
+    public int getCharacterColorAreasAlongLine(Pixel aa, Pixel bb) {
+        int areas = 0;
+        ArrayList<Pixel> pixelsList = findPixelCoordinatesAlongStraightLine(aa, bb);
+        int currentColor = backgroundColor.getRGB();
+        for(Pixel pixel : pixelsList) {
+            if(bufferedImage.getRGB(pixel.x, pixel.y) != currentColor) {
+                if(currentColor != characterColor.getRGB()) {
+                    areas++;
+                }
+                currentColor = bufferedImage.getRGB(pixel.x, pixel.y);
+            }
+        }
+        return areas;
+    }
+
+    //Bresenham's line algorithm
+    public ArrayList<Pixel> findPixelCoordinatesAlongStraightLine(Pixel pixelStart, Pixel pixelEnd) {
+
+        ArrayList<Pixel> pixelsList = new ArrayList<Pixel>();
+
+        int dx = Math.abs(pixelEnd.x - pixelStart.x);
+        int dy = Math.abs(pixelEnd.y - pixelStart.y);
+
+        int sx = pixelStart.x < pixelEnd.x ? 1 : -1;
+        int sy = pixelStart.y < pixelEnd.y ? 1 : -1;
+
+        int err = dx-dy;
+        int e2;
+
+        while (true)
+        {
+            pixelsList.add(new Pixel(pixelStart.x, pixelStart.y));
+
+            if (pixelStart.x == pixelEnd.x && pixelStart.y == pixelEnd.y)
+                break;
+
+            e2 = 2 * err;
+            if (e2 > -dy)
+            {
+                err = err - dy;
+                pixelStart.x = pixelStart.x + sx;
+            }
+
+            if (e2 < dx)
+            {
+                err = err + dx;
+                pixelStart.y = pixelStart.y + sy;
+            }
+        }
+        return pixelsList;
     }
 }

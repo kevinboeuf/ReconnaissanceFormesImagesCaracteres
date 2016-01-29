@@ -38,10 +38,16 @@ public class ImageRelation {
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
     float bottomRightPixelRatio;
 
+    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
+    int horizontalCharacterLines;
+
+    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
+    int verticalCharacterLines;
+
     @RelationAnnotation(classe = ImageClass.class)
     ImageClass classe = ImageClass.A;
 
-    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, float topLeftPixelRatio,  float topRightPixelRatio, float bottomLeftPixelRatio, float bottomRightPixelRatio, ImageClass classe) {
+    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, float topLeftPixelRatio, float topRightPixelRatio, float bottomLeftPixelRatio, float bottomRightPixelRatio, int horizontalCharacterLines, int verticalCharacterLines, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
@@ -49,6 +55,8 @@ public class ImageRelation {
         this.topRightPixelRatio = topRightPixelRatio;
         this.bottomLeftPixelRatio = bottomLeftPixelRatio;
         this.bottomRightPixelRatio = bottomRightPixelRatio;
+        this.horizontalCharacterLines = horizontalCharacterLines;
+        this.verticalCharacterLines = verticalCharacterLines;
         this.classe = classe;
     }
 
@@ -134,6 +142,8 @@ public class ImageRelation {
         float topRightPixelRatio = -1;
         float bottomLeftPixelRatio = -1;
         float bottomRightPixelRatio = -1;
+        int horizontalCharacterLines = 0;
+        int verticalCharacterLines = 0;
 
         ImageClass classe = ImageClass.A;
 
@@ -181,8 +191,18 @@ public class ImageRelation {
             return this;
         }
 
+        public ImageRelation.Builder setHorizontalCharacterLines(int horizontalCharacterLines) {
+            this.horizontalCharacterLines = horizontalCharacterLines;
+            return this;
+        }
+
+        public ImageRelation.Builder setVerticalCharacterLines(int verticalCharacterLines) {
+            this.verticalCharacterLines = verticalCharacterLines;
+            return this;
+        }
+
         public ImageRelation build(){
-            return new ImageRelation(size, relevantSurface, format, topLeftPixelRatio, topRightPixelRatio, bottomLeftPixelRatio, bottomRightPixelRatio, classe);
+            return new ImageRelation(size, relevantSurface, format, topLeftPixelRatio, topRightPixelRatio, bottomLeftPixelRatio, bottomRightPixelRatio, horizontalCharacterLines, verticalCharacterLines, classe);
         }
 
     }

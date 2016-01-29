@@ -83,19 +83,6 @@ public class Execute {
         return masksList;
     }
 
-    public static ArrayList<Image> loadMasksList(int beginningIndex, int endingIndex){
-        ArrayList<Image> masksList = new ArrayList<>();
-        for (int i = beginningIndex; i <= endingIndex; i++) {
-            File[] files = new File(LocalConfiguration.MASKFOLDER + "Sample" + String.format("%03d", i)).listFiles();
-            for (File file : files) {
-                if (file.isFile()) {
-                    masksList.add(new Image(ImageUtils.loadImage(file)));
-                }
-            }
-        }
-        return masksList;
-    }
-
     public static void applyGaussianBlur() {
         for(SDDImage sddImage : imagesList) {
             sddImage.image.gaussianBlur();

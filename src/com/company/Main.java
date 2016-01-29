@@ -11,7 +11,7 @@ import com.company.model.Rectangle;
 import com.company.model.SDDImage;
 import com.company.utils.ImageUtils;
 
-public class Execute {
+public class Main {
     public static final int scaleWidth = 128;
     public static final int scaleHeight = 128;
     public static final int displayWindowWidth = LocalConfiguration.DISPLAY_WINDOW_WIDTH;

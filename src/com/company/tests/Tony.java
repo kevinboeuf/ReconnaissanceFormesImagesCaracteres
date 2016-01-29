@@ -1,6 +1,6 @@
 package com.company.tests;
 
-import com.company.Execute;
+import com.company.Main;
 import com.company.model.ImageClass;
 
 import java.awt.*;
@@ -19,29 +19,29 @@ public class Tony {
 
     public static void runTest(int testNumber) {
         if(testNumber == 0) {
-            Execute.databaseManager.select(ImageClass.ZERO);
-            Execute.loadImagesList();
-            Execute.applyGaussianBlur();
-            Execute.applyGrayScale();
-            Execute.applyScale(scaleWidth, scaleHeight);
-            Execute.applyBinarization(characterColor, backgroundColor);
-            Execute.applyImageColor();
-            Execute.applyMask(true);
-            Execute.applyCrop();
-            Execute.showImagesList();
-            Execute.computeImagesListRelations();
+            Main.databaseManager.select(ImageClass.ZERO);
+            Main.loadImagesList();
+            Main.applyGaussianBlur();
+            Main.applyGrayScale();
+            Main.applyScale(scaleWidth, scaleHeight);
+            Main.applyBinarization(characterColor, backgroundColor);
+            Main.applyImageColor();
+            Main.applyMask(true);
+            Main.applyCrop();
+            Main.showImagesList();
+            Main.computeImagesListRelations();
         } else if(testNumber == 1) {
-            Execute.databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
-            Execute.loadImagesList();
-            Execute.applyGaussianBlur();
-            Execute.applyGrayScale();
-            Execute.applyScale(scaleWidth, scaleHeight);
-            Execute.applyBinarization(characterColor, backgroundColor);
-            Execute.applyImageColor();
-            Execute.applyMask(true);
-            Execute.applyCrop();
-            Execute.showImagesList();
-            Execute.computeImagesListRelations();
+            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
+            Main.loadImagesList();
+            Main.applyGaussianBlur();
+            Main.applyGrayScale();
+            Main.applyScale(scaleWidth, scaleHeight);
+            Main.applyBinarization(characterColor, backgroundColor);
+            Main.applyImageColor();
+            Main.applyMask(true);
+            Main.applyCrop();
+            Main.showImagesList();
+            Main.computeImagesListRelations();
         }
     }
 }

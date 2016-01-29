@@ -11,9 +11,6 @@ import com.company.model.SDDImage;
 import com.company.utils.ImageUtils;
 
 public class Execute {
-
-    public static final int beginningIndex = 1;
-    public static final int endingIndex = 1;
     public static final int scaleWidth = 128;
     public static final int scaleHeight = 128;
     public static final int displayWindowWidth = LocalConfiguration.DISPLAY_WINDOW_WIDTH;
@@ -26,7 +23,7 @@ public class Execute {
     private static DatabaseManager databaseManager = new DatabaseManager();
 
     public static void main(String[] args) {
-        runTest(2);
+        runTest(1);
     }
 
     public static void runTest(int testNumber) {
@@ -35,10 +32,12 @@ public class Execute {
              loadImagesList();
              applyGaussianBlur();
              applyGrayScale();
+             showImagesList();
+             applyScale(scaleWidth, scaleHeight);
              applyBinarization(characterColor, backgroundColor);
              applyImageColor();
-             applyMask(false);
-             applyScale(scaleWidth, scaleHeight);
+             applyMask(true);
+             showImagesList();
              applyCrop();
              showImagesList();
              computeImagesListRelations();
@@ -158,7 +157,7 @@ public class Execute {
 
     public static ImageRelation getImageRelation(SDDImage SDDImage) {
         int size = SDDImage.image.getSize();
-        FormatAttribute format = getFormat(SDDImage);
+        FormatAttribute format = getFormat(SDDImage, 0.05);
         float[] pixelCount = ((BinaryImage)SDDImage.image).getRepartition(characterColor.getRGB());
         float topLeftPixelCount = pixelCount[0];
         float topRightPixelCount = pixelCount[1];
@@ -181,11 +180,11 @@ public class Execute {
      * @param SDDImage
      * @return
      */
-    public static FormatAttribute getFormat(SDDImage SDDImage){
+    public static FormatAttribute getFormat(SDDImage SDDImage, double thresholdPourcentage){
         FormatAttribute format = FormatAttribute.SQUARE;
-        if(SDDImage.image.getHeight() > SDDImage.image.getWidth()){
+        if(SDDImage.image.getHeight() > SDDImage.image.getWidth() + SDDImage.image.getWidth() * thresholdPourcentage){
             format = FormatAttribute.VERTICAL_RECTANGLE;
-        }else if (SDDImage.image.getWidth() > SDDImage.image.getHeight()){
+        }else if (SDDImage.image.getWidth() > SDDImage.image.getHeight() + SDDImage.image.getHeight() * thresholdPourcentage){
             format = FormatAttribute.HORIZONTAL_RECTANGLE;
         }
         return format;

@@ -26,7 +26,7 @@ public class Execute {
     private static DatabaseManager databaseManager = new DatabaseManager();
 
     public static void main(String[] args) {
-        runTest(1);
+        runTest(2);
     }
 
     public static void runTest(int testNumber) {
@@ -55,14 +55,14 @@ public class Execute {
              showImagesList();
              computeImagesListRelations();
         } else if(testNumber == 2) {
-             databaseManager.selectRange(ImageClass.ZERO, ImageClass.CINQ).select(ImageClass.A);
+             databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
              loadImagesList();
              applyGaussianBlur();
              applyGrayScale();
+             applyScale(scaleWidth, scaleHeight);
              applyBinarization(characterColor, backgroundColor);
              applyImageColor();
-             applyMask(false);
-             applyScale(scaleWidth, scaleHeight);
+             applyMask(true);
              applyCrop();
              showImagesList();
              computeImagesListRelations();
@@ -159,11 +159,11 @@ public class Execute {
     public static ImageRelation getImageRelation(SDDImage SDDImage) {
         int size = SDDImage.image.getSize();
         FormatAttribute format = getFormat(SDDImage);
-        int[] pixelCount = ((BinaryImage)SDDImage.image).getRepartition(characterColor.getRGB());
-        int topLeftPixelCount = pixelCount[0];
-        int topRightPixelCount = pixelCount[1];
-        int bottomLeftPixelCount = pixelCount[2];
-        int bottomRightPixelCount = pixelCount[3];
+        float[] pixelCount = ((BinaryImage)SDDImage.image).getRepartition(characterColor.getRGB());
+        float topLeftPixelCount = pixelCount[0];
+        float topRightPixelCount = pixelCount[1];
+        float bottomLeftPixelCount = pixelCount[2];
+        float bottomRightPixelCount = pixelCount[3];
 
         ImageRelation.Builder builder = new ImageRelation.Builder();
         return builder.setSize(size)

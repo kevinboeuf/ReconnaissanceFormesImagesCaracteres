@@ -27,28 +27,28 @@ public class ImageRelation {
     FormatAttribute format;
 
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    Integer topLeftPixelCount;
+    float topLeftPixelRatio;
 
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    Integer topRightPixelCount;
+    float topRightPixelRatio;
 
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    Integer bottomLeftPixelCount;
+    float bottomLeftPixelRatio;
 
     @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    Integer bottomRightPixelCount;
+    float bottomRightPixelRatio;
 
     @RelationAnnotation(classe = ImageClass.class)
     ImageClass classe = ImageClass.A;
 
-    public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format, int topLeftPixelCount,  int topRightPixelCount, int bottomLeftPixelCount, int bottomRightPixelCount, ImageClass classe) {
+    public ImageRelation(Integer size, Integer relevantSurface, FormatAttribute format, float topLeftPixelRatio,  float topRightPixelRatio, float bottomLeftPixelRatio, float bottomRightPixelRatio, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
-        this.topLeftPixelCount = topLeftPixelCount;
-        this.topRightPixelCount = topRightPixelCount;
-        this.bottomLeftPixelCount = bottomLeftPixelCount;
-        this.bottomRightPixelCount = bottomRightPixelCount;
+        this.topLeftPixelRatio = topLeftPixelRatio;
+        this.topRightPixelRatio = topRightPixelRatio;
+        this.bottomLeftPixelRatio = bottomLeftPixelRatio;
+        this.bottomRightPixelRatio = bottomRightPixelRatio;
         this.classe = classe;
     }
 
@@ -126,10 +126,10 @@ public class ImageRelation {
         Integer size = -1;
         Integer relevantSurface = -1;
         FormatAttribute format = FormatAttribute.SQUARE;
-        Integer topLeftPixelCount = -1;
-        Integer topRightPixelCount = -1;
-        Integer bottomLeftPixelCount = -1;
-        Integer bottomRightPixelCount = -1;
+        float topLeftPixelRatio = -1;
+        float topRightPixelRatio = -1;
+        float bottomLeftPixelRatio = -1;
+        float bottomRightPixelRatio = -1;
 
         ImageClass classe = ImageClass.A;
 
@@ -157,28 +157,28 @@ public class ImageRelation {
             return this;
         }
 
-        public ImageRelation.Builder setTopLeftPixelCount(Integer characterTopLeftPixelCount) {
-            this.topLeftPixelCount = characterTopLeftPixelCount;
+        public ImageRelation.Builder setTopLeftPixelCount(float characterTopLeftPixelRatio) {
+            this.topLeftPixelRatio = characterTopLeftPixelRatio;
             return this;
         }
 
-        public ImageRelation.Builder setTopRightPixelCount(Integer characterTopRightPixelCount) {
-            this.topRightPixelCount = characterTopRightPixelCount;
+        public ImageRelation.Builder setTopRightPixelCount(float characterTopRightPixelRatio) {
+            this.topRightPixelRatio = characterTopRightPixelRatio;
             return this;
         }
 
-        public ImageRelation.Builder setBottomLeftPixelCount(Integer characterBottomLeftPixelCount) {
-            this.bottomLeftPixelCount = characterBottomLeftPixelCount;
+        public ImageRelation.Builder setBottomLeftPixelCount(float characterBottomLeftPixelRatio) {
+            this.bottomLeftPixelRatio= characterBottomLeftPixelRatio;
             return this;
         }
 
-        public ImageRelation.Builder setBottomRightPixelCount(Integer getCharacterBottomRightPixelCount) {
-            this.bottomRightPixelCount = getCharacterBottomRightPixelCount;
+        public ImageRelation.Builder setBottomRightPixelCount(float characterBottomRightPixelRatio) {
+            this.bottomRightPixelRatio= characterBottomRightPixelRatio;
             return this;
         }
 
         public ImageRelation build(){
-            return new ImageRelation(size, relevantSurface, format, topLeftPixelCount, topRightPixelCount, bottomLeftPixelCount, bottomRightPixelCount, classe);
+            return new ImageRelation(size, relevantSurface, format, topLeftPixelRatio, topRightPixelRatio, bottomLeftPixelRatio, bottomRightPixelRatio, classe);
         }
 
     }

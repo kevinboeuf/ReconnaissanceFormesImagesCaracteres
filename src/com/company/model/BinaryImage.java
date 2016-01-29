@@ -142,26 +142,29 @@ public class BinaryImage extends Image implements Cloneable {
     /**
      * Return the repartition of pixel
      */
-    public int[] getRepartition (int characterColor){
-        int[] pixelCount = new int[4];
+    public float[] getRepartition (int characterColor){
+        float[] pixelCount = new float[4];
 
         int width = getWidth();
         int height = getHeight();
-        int topLeftWhitePixelCount = 0;
-        int topRightWhitePixelCount = 0;
-        int bottomLeftWhitePixelCount = 0;
-        int bottomRightWhitePixelCount = 0;
+        float topLeftWhitePixelCount = 0;
+        float topRightWhitePixelCount = 0;
+        float bottomLeftWhitePixelCount = 0;
+        float bottomRightWhitePixelCount = 0;
+        float totalPixelCount = 0;
 
         for (int i=0; i<(width/2); i++){
             for (int j=0; j<(height/2); j++){
                 if(bufferedImage.getRGB(i, j) == characterColor){
                     topLeftWhitePixelCount++;
                 }
+                totalPixelCount++;
             }
             for (int k=(height/2); k<height; k++){
                 if(bufferedImage.getRGB(i, k) == characterColor) {
                     bottomLeftWhitePixelCount++;
                 }
+                totalPixelCount++;
             }
         }
 
@@ -170,17 +173,27 @@ public class BinaryImage extends Image implements Cloneable {
                 if(bufferedImage.getRGB(i, j) == characterColor) {
                     topRightWhitePixelCount++;
                 }
+                totalPixelCount++;
             }
             for (int k=(height/2); k<height; k++){
                 if(bufferedImage.getRGB(i, k) == characterColor){
                     bottomRightWhitePixelCount++;
                 }
+                totalPixelCount++;
             }
         }
-        pixelCount[0] = topLeftWhitePixelCount;
-        pixelCount[1] = topRightWhitePixelCount;
-        pixelCount[2] = bottomLeftWhitePixelCount;
-        pixelCount[3] = bottomRightWhitePixelCount;
+        /*
+        pixelCount[0] = topLeftWhitePixelCount/totalPixelCount;
+        pixelCount[1] = topRightWhitePixelCount/totalPixelCount;
+        pixelCount[2] = bottomLeftWhitePixelCount/totalPixelCount;
+        pixelCount[3] = bottomRightWhitePixelCount/totalPixelCount;
+        */
+
+        float totalWhitePixelCount = topLeftWhitePixelCount + topRightWhitePixelCount + bottomLeftWhitePixelCount + bottomRightWhitePixelCount;
+        pixelCount[0] = topLeftWhitePixelCount/totalWhitePixelCount;
+        pixelCount[1] = topRightWhitePixelCount/totalWhitePixelCount;
+        pixelCount[2] = bottomLeftWhitePixelCount/totalWhitePixelCount;
+        pixelCount[3] = bottomRightWhitePixelCount/totalWhitePixelCount;
 
         return pixelCount;
     }

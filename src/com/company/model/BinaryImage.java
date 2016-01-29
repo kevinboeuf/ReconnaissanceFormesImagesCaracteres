@@ -142,8 +142,8 @@ public class BinaryImage extends Image implements Cloneable {
     /**
      * Return the repartition of pixel
      */
-    public float[] getRepartition (int characterColor){
-        float[] pixelCount = new float[4];
+    public Float[] getRepartition (int characterColor){
+        Float[] pixelCount = new Float[4];
 
         int width = getWidth();
         int height = getHeight();

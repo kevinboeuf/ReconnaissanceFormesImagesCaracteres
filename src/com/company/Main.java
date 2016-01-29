@@ -42,6 +42,8 @@ public class Main {
         return masksList;
     }
 
+    //== Pré-traitements sur les images
+
     public static void applyGaussianBlur() {
         for(SDDImage sddImage : imagesList) {
             sddImage.image.gaussianBlur();
@@ -87,6 +89,15 @@ public class Main {
         }
     }
 
+    public static void applyCrop() {
+        for(SDDImage sddImage : imagesList) {
+            Rectangle rectangle = sddImage.image.getBoundaries(characterColor.getRGB());
+            sddImage.image.crop(rectangle);
+        }
+    }
+
+    //== Utilitaires
+
     public static void showImagesList() {
         ArrayList<Image> images = new ArrayList<>();
         for(SDDImage sddImage : imagesList) {
@@ -99,81 +110,74 @@ public class Main {
         ImageUtils.showImageList(images, displayWindowWidth, displayWindowHeight);
     }
 
-    public static void applyCrop() {
+    //-- Génération d'attributs
+
+    public static void generateARFF() {
+        ArrayList<ImageRelation> imageRelations = new ArrayList<>();
         for(SDDImage sddImage : imagesList) {
-            Rectangle rectangle = sddImage.image.getBoundaries(characterColor.getRGB());
-            sddImage.image.crop(rectangle);
+            sddImage.builder.setClasse(sddImage.imageClass);
+            ImageRelation imageRelation = sddImage.builder.build();
+            imageRelations.add(imageRelation);
         }
-    }
-
-    //-- Images relations methods
-
-    public static void computeImagesListRelations() {
-        for(SDDImage SDDImage : imagesList) {
-            imagesListRelations.add(getImageRelation(SDDImage));
-        }
-        ImageRelation.generateARFF(imagesListRelations);
-    }
-
-    public static ImageRelation getImageRelation(SDDImage SDDImage) {
-        int size = SDDImage.image.getSize();
-        double relevantSurface = getRelevantSurface(SDDImage);
-        FormatAttribute format = getFormat(SDDImage, 0.20);
-        float[] pixelCount = ((BinaryImage)SDDImage.image).getRepartition(characterColor.getRGB());
-        float topLeftPixelCount = pixelCount[0];
-        float topRightPixelCount = pixelCount[1];
-        float bottomLeftPixelCount = pixelCount[2];
-        float bottomRightPixelCount = pixelCount[3];
-        int horizontalCharacterLines = getHorizontalCharacterLines(SDDImage);
-        int verticalCharacterLines = getVerticalCharacterLines(SDDImage);
-
-        ImageRelation.Builder builder = new ImageRelation.Builder();
-        return builder.setSize(size)
-                .setFormat(format)
-                .setRelevantSurface(relevantSurface)
-                .setTopLeftPixelCount(topLeftPixelCount)
-                .setTopRightPixelCount(topRightPixelCount)
-                .setBottomLeftPixelCount(bottomLeftPixelCount)
-                .setBottomRightPixelCount(bottomRightPixelCount)
-                .setHorizontalCharacterLines(horizontalCharacterLines)
-                .setVerticalCharacterLines(verticalCharacterLines)
-                .setClasse(SDDImage.imageClass)
-                .build();
+        ImageRelation.generateARFF(imageRelations);
     }
 
     /**
      * Get the format of the SDDImage
-     * @param SDDImage
      * @return
      */
-    public static FormatAttribute getFormat(SDDImage SDDImage, double thresholdPourcentage){
-        FormatAttribute format = FormatAttribute.SQUARE;
-        if(SDDImage.image.getHeight() > SDDImage.image.getWidth() + SDDImage.image.getWidth() * thresholdPourcentage){
-            format = FormatAttribute.VERTICAL_RECTANGLE;
-        }else if (SDDImage.image.getWidth() > SDDImage.image.getHeight() + SDDImage.image.getHeight() * thresholdPourcentage){
-            format = FormatAttribute.HORIZONTAL_RECTANGLE;
+    public static void generateAttributeFormat(double thresholdPourcentage){
+        for(SDDImage sddImage : imagesList) {
+            FormatAttribute format = FormatAttribute.SQUARE;
+            if(sddImage.image.getHeight() > sddImage.image.getWidth() + sddImage.image.getWidth() * thresholdPourcentage){
+                format = FormatAttribute.VERTICAL_RECTANGLE;
+            }else if (sddImage.image.getWidth() > sddImage.image.getHeight() + sddImage.image.getHeight() * thresholdPourcentage){
+                format = FormatAttribute.HORIZONTAL_RECTANGLE;
+            }
+            sddImage.builder.setFormat(format);
         }
-        return format;
     }
 
-    public static double getRelevantSurface(SDDImage sddImage) {
-        int[] colorsCount = ((BinaryImage)sddImage.image).countPixelsByColors();
-        double surface = (float)colorsCount[0] / ((float)colorsCount[0] + (float)colorsCount[1]);
-        return surface;
+    /**
+     * Get the format of the SDDImage
+     * @return
+     */
+    public static void generateAttributeRelevantSurface(){
+        for(SDDImage sddImage : imagesList) {
+            int[] colorsCount = ((BinaryImage)sddImage.image).countPixelsByColors();
+            double surface = (float)colorsCount[0] / ((float)colorsCount[0] + (float)colorsCount[1]);
+            sddImage.builder.setRelevantSurface(surface);
+        }
     }
 
-    public static int getHorizontalCharacterLines(SDDImage sddImage) {
-        return sddImage.image.getCharacterColorAreasAlongLine(
-                sddImage.image.getLeftMiddlePixel(),
-                sddImage.image.getRightMiddlePixel()
-        );
+    public static void generateAttributeHorizontalCharacterLines() {
+        for (SDDImage sddImage : imagesList) {
+            int count = sddImage.image.getCharacterColorAreasAlongLine(
+                    sddImage.image.getLeftMiddlePixel(),
+                    sddImage.image.getRightMiddlePixel()
+            );
+            sddImage.builder.setHorizontalCharacterLines(count);
+        }
     }
 
-    public static int getVerticalCharacterLines(SDDImage sddImage) {
-        return sddImage.image.getCharacterColorAreasAlongLine(
-                sddImage.image.getTopMiddlePixel(),
-                sddImage.image.getBottomMiddlePixel()
-        );
+    public static void generateAttributeVerticalCharacterLines() {
+        for (SDDImage sddImage : imagesList) {
+            int count = sddImage.image.getCharacterColorAreasAlongLine(
+                    sddImage.image.getTopMiddlePixel(),
+                    sddImage.image.getBottomMiddlePixel()
+            );
+            sddImage.builder.setVerticalCharacterLines(count);
+        }
     }
 
+    /**
+     * TODO : découper l'image en fonction du paramètre "split"
+     * @param split
+     */
+    public static void generateAttributePixelRepartitions(int split) {
+        for (SDDImage sddImage : imagesList) {
+            Float[] pixelCount = ((BinaryImage)sddImage.image).getRepartition(characterColor.getRGB());
+            sddImage.builder.setCharacterPixelsRepartitionRatio(pixelCount);
+        }
+    }
 }

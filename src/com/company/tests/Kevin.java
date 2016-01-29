@@ -19,7 +19,7 @@ public class Kevin {
 
     public static void runTest(int testNumber) {
         if(testNumber == 0) {
-            Main.databaseManager.select(ImageClass.ZERO);
+            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
             Main.loadImagesList();
             Main.applyGaussianBlur();
             Main.applyGrayScale();
@@ -29,7 +29,13 @@ public class Kevin {
             Main.applyMask(true);
             Main.applyCrop();
             Main.showImagesList();
-            Main.computeImagesListRelations();
+            Main.generateAttributeFormat(0.05);
+            Main.generateAttributeRelevantSurface();
+            Main.generateAttributePixelRepartitions(4);
+            Main.generateAttributeHorizontalCharacterLines();
+            Main.generateAttributeVerticalCharacterLines();
+            Main.generateAttributeRelevantSurface();
+            Main.generateARFF();
         }
     }
 }

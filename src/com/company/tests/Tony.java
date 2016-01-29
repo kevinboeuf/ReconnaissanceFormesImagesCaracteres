@@ -19,7 +19,7 @@ public class Tony {
 
     public static void runTest(int testNumber) {
         if(testNumber == 0) {
-            Main.databaseManager.select(ImageClass.ZERO);
+            Main.databaseManager.selectAll();
             Main.loadImagesList();
             Main.applyGaussianBlur();
             Main.applyGrayScale();
@@ -29,19 +29,12 @@ public class Tony {
             Main.applyMask(true);
             Main.applyCrop();
             Main.showImagesList();
-            Main.computeImagesListRelations();
-        } else if(testNumber == 1) {
-            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
-            Main.loadImagesList();
-            Main.applyGaussianBlur();
-            Main.applyGrayScale();
-            Main.applyScale(scaleWidth, scaleHeight);
-            Main.applyBinarization(characterColor, backgroundColor);
-            Main.applyImageColor();
-            Main.applyMask(true);
-            Main.applyCrop();
-            Main.showImagesList();
-            Main.computeImagesListRelations();
+            Main.generateAttributeFormat(0.05);
+            Main.generateAttributeRelevantSurface();
+            Main.generateAttributePixelRepartitions(4);
+            Main.generateAttributeHorizontalCharacterLines();
+            Main.generateAttributeVerticalCharacterLines();
+            Main.generateARFF();
         }
     }
 }

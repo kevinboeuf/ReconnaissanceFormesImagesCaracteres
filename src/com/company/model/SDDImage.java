@@ -6,6 +6,7 @@ public class SDDImage implements Cloneable {
     public String name ="";
     public Image image;
     public ImageClass imageClass = ImageClass.ZERO;
+    public ImageRelation.Builder builder = new ImageRelation.Builder();
 
     public SDDImage(String name, Image image, ImageClass imageClass) {
         this.name = name;

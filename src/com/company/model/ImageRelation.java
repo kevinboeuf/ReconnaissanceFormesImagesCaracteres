@@ -7,63 +7,52 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ImageRelation {
 
     static final String RELATION_NAME = "ImageRelation";
 
     //Size of the image (width * height)
-    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    Integer size;
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    Integer size = -1;
 
     // Surface concerned by the character
-    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    Double relevantSurface;
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    Double relevantSurface = -1.0;
 
     // Horizontal / Vertical rectangle or square
-    @RelationAnnotation(complexType = FormatAttribute.class)
-    FormatAttribute format;
+    @RelationAnnotation(type = AnnotationType.MULTIPLE_ENUM, multipleType = FormatAttribute.class)
+    FormatAttribute format = FormatAttribute.HORIZONTAL_RECTANGLE;
 
-    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    float topLeftPixelRatio;
+    @RelationAnnotation(isDynamic = true, type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    List<Float> characterPixelsRepartitionRatio = new ArrayList<>();
 
-    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    float topRightPixelRatio;
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    int horizontalCharacterLines = -1;
 
-    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    float bottomLeftPixelRatio;
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    int verticalCharacterLines = -1;
 
-    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    float bottomRightPixelRatio;
+    @RelationAnnotation(isClass = true, type = AnnotationType.MULTIPLE_ENUM, multipleType = ImageClass.class)
+    ImageClass classe = ImageClass.ZERO;
 
-    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    int horizontalCharacterLines;
-
-    @RelationAnnotation(type = SimpleAttributeType.NUMERIC)
-    int verticalCharacterLines;
-
-    @RelationAnnotation(classe = ImageClass.class)
-    ImageClass classe = ImageClass.A;
-
-    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, float topLeftPixelRatio, float topRightPixelRatio, float bottomLeftPixelRatio, float bottomRightPixelRatio, int horizontalCharacterLines, int verticalCharacterLines, ImageClass classe) {
+    private ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, List<Float> characterPixelsRepartitionRatio, int horizontalCharacterLines, int verticalCharacterLines, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
-        this.topLeftPixelRatio = topLeftPixelRatio;
-        this.topRightPixelRatio = topRightPixelRatio;
-        this.bottomLeftPixelRatio = bottomLeftPixelRatio;
-        this.bottomRightPixelRatio = bottomRightPixelRatio;
+        this.characterPixelsRepartitionRatio = characterPixelsRepartitionRatio;
         this.horizontalCharacterLines = horizontalCharacterLines;
         this.verticalCharacterLines = verticalCharacterLines;
         this.classe = classe;
     }
 
+    public static List<String> attributesEnabled = new ArrayList<>();
+
     /**
      * Types simples (natifs) d'attributs utilisés par le format arff
      */
-    public enum SimpleAttributeType {
+    public enum ARFFType {
         NONE,
         NUMERIC,
         STRING,
@@ -99,21 +88,49 @@ public class ImageRelation {
         for (Field field : obj.getDeclaredFields()) {
             if (field.isAnnotationPresent(RelationAnnotation.class)) {
 
-                Annotation annotation = field.getAnnotation(RelationAnnotation.class);
-                RelationAnnotation relationAnnotation = (RelationAnnotation) annotation;
-                Enum[] enumTypes;
+                if(attributesEnabled.contains(field.getName())) {
+                    Annotation annotation = field.getAnnotation(RelationAnnotation.class);
+                    RelationAnnotation relationAnnotation = (RelationAnnotation) annotation;
 
-                if(!relationAnnotation.complexType().equals(Enum.class)) {
-                    enumTypes = relationAnnotation.complexType().getEnumConstants();
-                    writer.println("@ATTRIBUTE " + field.getName() + " {"+ StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
-                } else if(!relationAnnotation.type().equals(SimpleAttributeType.NONE)){
-                    writer.println("@ATTRIBUTE " + field.getName() + " " + relationAnnotation.type());
-                } else if(relationAnnotation.classe() != Enum.class) {
-                    enumTypes = relationAnnotation.classe().getEnumConstants();
-                    writer.println("@ATTRIBUTE class {"+ StringUtils.joinEnum(enumTypes, SEPARATOR)+"}");
+                    String typeValues = "";
+                    String attributeName = "";
+
+                    if (relationAnnotation.type().equals(AnnotationType.SINGLE_ENUM)) {
+                        typeValues = relationAnnotation.singleType().toString();
+                    } else if (relationAnnotation.type().equals(AnnotationType.SINGLE_STRING)) {
+                        typeValues = relationAnnotation.singleStringType();
+                    } else if (relationAnnotation.type().equals(AnnotationType.MULTIPLE_ENUM)) {
+                        Enum[] enumTypes = relationAnnotation.multipleType().getEnumConstants();
+                        typeValues = "{" + StringUtils.joinEnum(enumTypes, SEPARATOR) + "}";
+                    } else if (relationAnnotation.type().equals(AnnotationType.MULTIPLE_ARRAY)) {
+                        String[] stringTypes = relationAnnotation.multipleArrayType();
+                        List<String> stringList = Arrays.asList(stringTypes);
+                        typeValues = "{" + StringUtils.joinStringArray(stringList, SEPARATOR) + "}";
+                    }
+
+                    if (relationAnnotation.isDynamic()) {
+                        if (imageRelationList.size() > 0) {
+                            try {
+                                int size = ((Collection) field.get(imageRelationList.get(0))).size();
+                                for (int i = 0; i < size; i++) {
+                                    writer.println("@ATTRIBUTE " + field.getName() + i + " " + typeValues);
+                                }
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else {
+                        if (relationAnnotation.isClass()) {
+                            attributeName = "class";
+                        } else {
+                            attributeName = field.getName();
+                        }
+                        writer.println("@ATTRIBUTE " + attributeName + " " + typeValues);
+                    }
                 }
             }
         }
+
 
         // print attributes data
         writer.println("\n@DATA");
@@ -121,10 +138,19 @@ public class ImageRelation {
             List<String> attributes = new ArrayList<>();
             for (Field field : obj.getDeclaredFields()) {
                 if (field.isAnnotationPresent(RelationAnnotation.class)) {
-                    try {
-                        attributes.add(field.get(imageRelation).toString());
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                    if(attributesEnabled.contains(field.getName())) {
+                        try {
+                            if(field.get(imageRelation) instanceof Collection) {
+                                Iterator iterator = ((Collection)field.get(imageRelation)).iterator();
+                                while (iterator.hasNext()) {
+                                    attributes.add(iterator.next().toString());
+                                }
+                            } else {
+                                attributes.add(field.get(imageRelation).toString());
+                            }
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -138,14 +164,13 @@ public class ImageRelation {
         Integer size = -1;
         Double relevantSurface = 0.0;
         FormatAttribute format = FormatAttribute.SQUARE;
-        float topLeftPixelRatio = -1;
-        float topRightPixelRatio = -1;
-        float bottomLeftPixelRatio = -1;
-        float bottomRightPixelRatio = -1;
         int horizontalCharacterLines = 0;
         int verticalCharacterLines = 0;
+        List<Float> characterPixelsRepartitionRatio = new ArrayList<>();
 
         ImageClass classe = ImageClass.A;
+
+        Class<ImageRelation> obj = ImageRelation.class;
 
         public Builder() {
 
@@ -153,56 +178,61 @@ public class ImageRelation {
 
         public ImageRelation.Builder setSize(Integer size) {
             this.size = size;
+            enable("size");
             return this;
         }
 
         public ImageRelation.Builder setRelevantSurface(Double relevantSurface) {
             this.relevantSurface = relevantSurface;
+            enable("relevantSurface");
             return this;
         }
 
         public ImageRelation.Builder setFormat(FormatAttribute format) {
             this.format = format;
+            enable("format");
             return this;
         }
 
         public ImageRelation.Builder setClasse(ImageClass classe) {
             this.classe = classe;
+            enable("classe");
             return this;
         }
 
-        public ImageRelation.Builder setTopLeftPixelCount(float characterTopLeftPixelRatio) {
-            this.topLeftPixelRatio = characterTopLeftPixelRatio;
-            return this;
-        }
-
-        public ImageRelation.Builder setTopRightPixelCount(float characterTopRightPixelRatio) {
-            this.topRightPixelRatio = characterTopRightPixelRatio;
-            return this;
-        }
-
-        public ImageRelation.Builder setBottomLeftPixelCount(float characterBottomLeftPixelRatio) {
-            this.bottomLeftPixelRatio= characterBottomLeftPixelRatio;
-            return this;
-        }
-
-        public ImageRelation.Builder setBottomRightPixelCount(float characterBottomRightPixelRatio) {
-            this.bottomRightPixelRatio= characterBottomRightPixelRatio;
+        public ImageRelation.Builder setCharacterPixelsRepartitionRatio(Float[] characterPixelsRepartitionRatio) {
+            this.characterPixelsRepartitionRatio = Arrays.asList(characterPixelsRepartitionRatio);
+            enable("characterPixelsRepartitionRatio");
             return this;
         }
 
         public ImageRelation.Builder setHorizontalCharacterLines(int horizontalCharacterLines) {
             this.horizontalCharacterLines = horizontalCharacterLines;
+            enable("horizontalCharacterLines");
             return this;
         }
 
         public ImageRelation.Builder setVerticalCharacterLines(int verticalCharacterLines) {
             this.verticalCharacterLines = verticalCharacterLines;
+            enable("verticalCharacterLines");
             return this;
         }
 
+        public void enable(String fieldToEnable) {
+            obj.getDeclaredFields();
+            for (Field field : obj.getDeclaredFields()) {
+                if (field.isAnnotationPresent(RelationAnnotation.class)) {
+                    if(fieldToEnable.equals(field.getName())) {
+                        if(!attributesEnabled.contains(field.getName())) {
+                            attributesEnabled.add(field.getName());
+                        }
+                    }
+                }
+            }
+        }
+
         public ImageRelation build(){
-            return new ImageRelation(size, relevantSurface, format, topLeftPixelRatio, topRightPixelRatio, bottomLeftPixelRatio, bottomRightPixelRatio, horizontalCharacterLines, verticalCharacterLines, classe);
+            return new ImageRelation(size, relevantSurface, format, characterPixelsRepartitionRatio, horizontalCharacterLines, verticalCharacterLines, classe);
         }
 
     }

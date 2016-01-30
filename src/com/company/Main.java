@@ -20,7 +20,6 @@ public class Main {
     public static final Color backgroundColor = Color.BLACK;
 
     public static ArrayList<SDDImage>  imagesList = new ArrayList<SDDImage>();
-    public static ArrayList<ImageRelation>  imagesListRelations = new ArrayList<ImageRelation>();
     public static DatabaseManager databaseManager = new DatabaseManager();
 
     public static void main(String[] args) {}
@@ -110,6 +109,10 @@ public class Main {
         ImageUtils.showImageList(images, displayWindowWidth, displayWindowHeight);
     }
 
+    public static void clear() {
+        imagesList.clear();
+    }
+
     //-- Génération d'attributs
 
     public static void generateARFF() {
@@ -178,6 +181,20 @@ public class Main {
         for (SDDImage sddImage : imagesList) {
             Float[] pixelCount = ((BinaryImage)sddImage.image).getRepartition(characterColor.getRGB());
             sddImage.builder.setCharacterPixelsRepartitionRatio(pixelCount);
+        }
+    }
+
+    public static void generateAttributeVerticalCenterSymetry() {
+        for (SDDImage sddImage : imagesList) {
+            Float score = sddImage.image.getSymetryScore(sddImage.image.getTopMiddlePixel(), sddImage.image.getBottomMiddlePixel());
+            sddImage.builder.setVerticalCenterSymetry(score);
+        }
+    }
+
+    public static void generateAttributeHorizontalCenterSymetry() {
+        for (SDDImage sddImage : imagesList) {
+            Float score = sddImage.image.getSymetryScore(sddImage.image.getLeftMiddlePixel(), sddImage.image.getRightMiddlePixel());
+            sddImage.builder.setHorizontalCenterSymetry(score);
         }
     }
 }

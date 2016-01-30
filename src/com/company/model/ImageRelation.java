@@ -34,16 +34,24 @@ public class ImageRelation {
     @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
     int verticalCharacterLines = -1;
 
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    float verticalCenterSymetry = -1;
+
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    float horizontalCenterSymetry = -1;
+
     @RelationAnnotation(isClass = true, type = AnnotationType.MULTIPLE_ENUM, multipleType = ImageClass.class)
     ImageClass classe = ImageClass.ZERO;
 
-    private ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, List<Float> characterPixelsRepartitionRatio, int horizontalCharacterLines, int verticalCharacterLines, ImageClass classe) {
+    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, List<Float> characterPixelsRepartitionRatio, int horizontalCharacterLines, int verticalCharacterLines, float verticalCenterSymetry, float horizontalCenterSymetry, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
         this.characterPixelsRepartitionRatio = characterPixelsRepartitionRatio;
         this.horizontalCharacterLines = horizontalCharacterLines;
         this.verticalCharacterLines = verticalCharacterLines;
+        this.verticalCenterSymetry = verticalCenterSymetry;
+        this.horizontalCenterSymetry = horizontalCenterSymetry;
         this.classe = classe;
     }
 
@@ -167,6 +175,8 @@ public class ImageRelation {
         int horizontalCharacterLines = 0;
         int verticalCharacterLines = 0;
         List<Float> characterPixelsRepartitionRatio = new ArrayList<>();
+        float verticalCenterSymetry = -1;
+        float horizontalCenterSymetry = -1;
 
         ImageClass classe = ImageClass.A;
 
@@ -218,6 +228,18 @@ public class ImageRelation {
             return this;
         }
 
+        public ImageRelation.Builder setHorizontalCenterSymetry(Float horizontalCenterSymetry) {
+            this.horizontalCenterSymetry = horizontalCenterSymetry;
+            enable("horizontalCenterSymetry");
+            return this;
+        }
+
+        public ImageRelation.Builder setVerticalCenterSymetry(Float verticalCenterSymetry) {
+            this.verticalCenterSymetry = verticalCenterSymetry;
+            enable("verticalCenterSymetry");
+            return this;
+        }
+
         public void enable(String fieldToEnable) {
             obj.getDeclaredFields();
             for (Field field : obj.getDeclaredFields()) {
@@ -232,7 +254,7 @@ public class ImageRelation {
         }
 
         public ImageRelation build(){
-            return new ImageRelation(size, relevantSurface, format, characterPixelsRepartitionRatio, horizontalCharacterLines, verticalCharacterLines, classe);
+            return new ImageRelation(size, relevantSurface, format, characterPixelsRepartitionRatio, horizontalCharacterLines, verticalCharacterLines, horizontalCenterSymetry, verticalCenterSymetry, classe);
         }
 
     }

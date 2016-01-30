@@ -1,5 +1,6 @@
 package com.company.model;
 
+import com.company.Main;
 import com.company.utils.ImageUtils;
 import com.company.utils.MapUtils;
 
@@ -350,5 +351,67 @@ public class Image implements Cloneable {
             }
         }
         return pixelsList;
+    }
+
+    public Float getSymetryScore(Pixel pixel1, Pixel pixel2) {
+        Float score = new Float(0);
+        ArrayList<Pixel> symetryAxis = new ArrayList<>();
+        symetryAxis = findPixelCoordinatesAlongStraightLine(pixel1, pixel2);
+
+        // horizontal
+        if(Math.abs(pixel1.x - pixel2.x) > Math.abs(pixel1.y - pixel2.y)) {
+            for(Pixel center : symetryAxis) {
+                Pixel side1Pixel = new Pixel(center.x, center.y--);
+                Pixel side2Pixel = new Pixel(center.x, center.y++);
+                while(isPixelCoordinatesInImage(side1Pixel) && isPixelCoordinatesInImage(side2Pixel)) {
+                    int characterColorRGB = characterColor.getRGB();
+                    if(bufferedImage.getRGB(side1Pixel.x, side1Pixel.y) == characterColorRGB && bufferedImage.getRGB(side1Pixel.x, side1Pixel.y) == bufferedImage.getRGB(side2Pixel.x, side2Pixel.y)) {
+                        score++;
+                    }
+                    side1Pixel.y--;
+                    side2Pixel.y++;
+                }
+            }
+        } else { // vertical
+            for(Pixel center : symetryAxis) {
+                Pixel side1Pixel = new Pixel(center.x--, center.y);
+                Pixel side2Pixel = new Pixel(center.x++, center.y);
+                while(isPixelCoordinatesInImage(side1Pixel) && isPixelCoordinatesInImage(side2Pixel)) {
+                    int characterColorRGB = characterColor.getRGB();
+                    if(bufferedImage.getRGB(side1Pixel.x, side1Pixel.y) == characterColorRGB && bufferedImage.getRGB(side1Pixel.x, side1Pixel.y) == bufferedImage.getRGB(side2Pixel.x, side2Pixel.y)) {
+                        score++;
+                    }
+                    side1Pixel.x--;
+                    side2Pixel.x++;
+                }
+            }
+        }
+
+        float characterColorCount = getCharacterColorCount() / 2;
+        if(characterColorCount > 0) {
+            return score / characterColorCount;
+        } else {
+            return new Float(0);
+        }
+    }
+
+    public int getCharacterColorCount() {
+        int count = 0;
+        for(int y = 0; y < getHeight(); y++) {
+            for(int x = 0; x < getWidth(); x++) {
+                if(bufferedImage.getRGB(x, y) == characterColor.getRGB()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public boolean isPixelCoordinatesInImage(Pixel pixel){
+        if(pixel.x >= 0 && pixel.x <= getWidth() - 1 && pixel.y >= 0 && pixel.y <= getHeight() - 1) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

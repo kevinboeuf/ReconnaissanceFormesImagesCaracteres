@@ -15,6 +15,11 @@ public class DatabaseManager {
 
     }
 
+    public DatabaseManager reset() {
+        databaseItems.clear();
+        return this;
+    }
+
     public DatabaseManager selectAll() {
         for(ImageClass imageClass : ImageClass.values()) {
             DatabaseFolder folder = new DatabaseFolder(IMAGE_PATH + imageClass.path + "/", imageClass, MASK_PATH + imageClass.path + "/");

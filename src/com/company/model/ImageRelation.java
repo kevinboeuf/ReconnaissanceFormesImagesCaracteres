@@ -35,23 +35,23 @@ public class ImageRelation {
     int verticalCharacterLines = -1;
 
     @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
-    float verticalCenterSymetry = -1;
+    float horizontalCenterSymetry = -1;
 
     @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
-    float horizontalCenterSymetry = -1;
+    float verticalCenterSymetry = -1;
 
     @RelationAnnotation(isClass = true, type = AnnotationType.MULTIPLE_ENUM, multipleType = ImageClass.class)
     ImageClass classe = ImageClass.ZERO;
 
-    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, List<Float> characterPixelsRepartitionRatio, int horizontalCharacterLines, int verticalCharacterLines, float verticalCenterSymetry, float horizontalCenterSymetry, ImageClass classe) {
+    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, List<Float> characterPixelsRepartitionRatio, int horizontalCharacterLines, int verticalCharacterLines, float horizontalCenterSymetry, float verticalCenterSymetry, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
         this.characterPixelsRepartitionRatio = characterPixelsRepartitionRatio;
         this.horizontalCharacterLines = horizontalCharacterLines;
         this.verticalCharacterLines = verticalCharacterLines;
-        this.verticalCenterSymetry = verticalCenterSymetry;
         this.horizontalCenterSymetry = horizontalCenterSymetry;
+        this.verticalCenterSymetry = verticalCenterSymetry;
         this.classe = classe;
     }
 
@@ -175,8 +175,8 @@ public class ImageRelation {
         int horizontalCharacterLines = 0;
         int verticalCharacterLines = 0;
         List<Float> characterPixelsRepartitionRatio = new ArrayList<>();
-        float verticalCenterSymetry = -1;
-        float horizontalCenterSymetry = -1;
+        float verticalCenterSymetry = -1f;
+        float horizontalCenterSymetry = -1f;
 
         ImageClass classe = ImageClass.A;
 

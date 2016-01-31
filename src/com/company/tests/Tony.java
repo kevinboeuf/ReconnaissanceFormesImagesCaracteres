@@ -20,7 +20,7 @@ public class Tony {
 
     public static void runTest(int testNumber) {
         if(testNumber == 0) {
-            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.z);
+            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.z, 0);
             Main.loadImagesList();
             Main.applyGaussianBlur();
             Main.applyGrayScale();
@@ -30,34 +30,14 @@ public class Tony {
             Main.applyMask(true);
             Main.applyCrop();
             Main.showImagesList();
-            Main.generateAttributeFormat(0.05);
-            Main.generateAttributeRelevantSurface();
-            Main.generateAttributePixelRepartitions(4);
+//            Main.generateAttributeFormat(0.30);
+//            Main.generateAttributeRelevantSurface();
+            Main.generateAttributePixelRepartitions(9);
             Main.generateAttributeHorizontalCharacterLines();
             Main.generateAttributeVerticalCharacterLines();
-            Main.generateAttributeVerticalCenterSymetry();
-            Main.generateAttributeHorizontalCenterSymetry();
+            Main.generateAttributeVerticalCenterSymetry(0, 90);
+            Main.generateAttributeHorizontalCenterSymetry(0, 90);
             Main.generateARFF();
-        } else if(testNumber == 1) {
-            Main.databaseManager.select(ImageClass.A);
-            Main.loadImagesList();
-            Main.applyGrayScale();
-            Main.applyScale(scaleWidth, scaleHeight);
-            Main.applyBinarization(characterColor, backgroundColor);
-            Main.applyImageColor();
-            Main.applyMask(true);
-            Main.showImagesList();
-            Main.databaseManager.reset();
-            Main.clear();
-            Main.databaseManager.select(ImageClass.B);
-            Main.loadImagesList();
-            Main.applyGrayScale();
-            Main.applyScale(scaleWidth, scaleHeight);
-            Main.applyBinarization(characterColor, backgroundColor);
-            Main.applyImageColor();
-            Main.applyMask(true);
-            Main.showImagesList();
         }
-
     }
 }

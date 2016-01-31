@@ -11,18 +11,28 @@ public class DatabaseFolder {
     public ImageClass imageClass = ImageClass.ZERO;
     ArrayList<DatabaseItem> databaseItems = new ArrayList<>();
 
-    public DatabaseFolder(String imagesPath, ImageClass imageClass, String maskPath) {
+    public DatabaseFolder(String imagesPath, ImageClass imageClass, String maskPath, int limit) {
         this.path = imagesPath;
         this.imageClass = imageClass;
         this.maskPath = maskPath;
-        initItems();
+        initItems(limit);
     }
 
-    public void initItems() {
+    public void initItems(int limit) {
         File[] files = new File(path).listFiles();
+        int count = 0;
         for (File file : files) {
             if (file.isFile()) {
-                databaseItems.add(new DatabaseItem(path + file.getName(), file.getName(), imageClass, maskPath + file.getName()));
+                if(limit > 0) {
+                    if(count < limit) {
+                        databaseItems.add(new DatabaseItem(path + file.getName(), file.getName(), imageClass, maskPath + file.getName()));
+                        count++;
+                    } else {
+                        break;
+                    }
+                } else {
+                    databaseItems.add(new DatabaseItem(path + file.getName(), file.getName(), imageClass, maskPath + file.getName()));
+                }
             }
         }
     }

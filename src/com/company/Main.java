@@ -179,22 +179,38 @@ public class Main {
      */
     public static void generateAttributePixelRepartitions(int split) {
         for (SDDImage sddImage : imagesList) {
-            Float[] pixelCount = ((BinaryImage)sddImage.image).getRepartition(characterColor.getRGB());
+            Float[] pixelCount = ((BinaryImage)sddImage.image).getRepartition(characterColor.getRGB(), split);
             sddImage.builder.setCharacterPixelsRepartitionRatio(pixelCount);
         }
     }
 
-    public static void generateAttributeVerticalCenterSymetry() {
+    public static void generateAttributeVerticalCenterSymetry(int mode, int limit) {
         for (SDDImage sddImage : imagesList) {
             Float score = sddImage.image.getSymetryScore(sddImage.image.getTopMiddlePixel(), sddImage.image.getBottomMiddlePixel());
-            sddImage.builder.setVerticalCenterSymetry(score);
+            if(mode == 0) { // pourcentage de symétrie
+                sddImage.builder.setVerticalCenterSymetry(score);
+            } else { // binaire :symétrique(1) ou non (0) en fonction de la "limite" donnée
+                if(score * 100 >= limit) {
+                    sddImage.builder.setVerticalCenterSymetry(1.0f);
+                } else {
+                    sddImage.builder.setVerticalCenterSymetry(0f);
+                }
+            }
         }
     }
 
-    public static void generateAttributeHorizontalCenterSymetry() {
+    public static void generateAttributeHorizontalCenterSymetry(int mode, int limit) {
         for (SDDImage sddImage : imagesList) {
             Float score = sddImage.image.getSymetryScore(sddImage.image.getLeftMiddlePixel(), sddImage.image.getRightMiddlePixel());
-            sddImage.builder.setHorizontalCenterSymetry(score);
+            if(mode == 0) { // pourcentage de symétrie
+                sddImage.builder.setHorizontalCenterSymetry(score);
+            } else { // binaire :symétrique(1) ou non (0) en fonction de la "limite" donnée
+                if(score * 100 >= limit) {
+                    sddImage.builder.setHorizontalCenterSymetry(1.0f);
+                } else {
+                    sddImage.builder.setHorizontalCenterSymetry(0f);
+                }
+            }
         }
     }
 }

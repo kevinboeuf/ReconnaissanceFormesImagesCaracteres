@@ -19,7 +19,7 @@ public class Kevin {
 
     public static void runTest(int testNumber) {
         if(testNumber == 0) {
-            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z);
+            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z, 0);
             Main.loadImagesList();
             Main.applyGaussianBlur();
             Main.applyGrayScale();

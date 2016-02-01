@@ -142,59 +142,138 @@ public class BinaryImage extends Image implements Cloneable {
     /**
      * Return the repartition of pixel
      */
-    public Float[] getRepartition (int characterColor){
-        Float[] pixelCount = new Float[4];
+    public Float[] getRepartition (int characterColor, int split){
+        Float[] pixelCount = {};
+        if(split == 4) {
+            pixelCount = new Float[4];
+            pixelCount[0] = 0f;
+            pixelCount[1] = 0f;
+            pixelCount[2] = 0f;
+            pixelCount[3] = 0f;
+            int width = getWidth();
+            int height = getHeight();
+            float topLeftWhitePixelCount = 0;
+            float topRightWhitePixelCount = 0;
+            float bottomLeftWhitePixelCount = 0;
+            float bottomRightWhitePixelCount = 0;
+            float totalPixelCount = 0;
 
-        int width = getWidth();
-        int height = getHeight();
-        float topLeftWhitePixelCount = 0;
-        float topRightWhitePixelCount = 0;
-        float bottomLeftWhitePixelCount = 0;
-        float bottomRightWhitePixelCount = 0;
-        float totalPixelCount = 0;
+            for (int i=0; i<(width/2); i++){
+                for (int j=0; j<(height/2); j++){
+                    if(bufferedImage.getRGB(i, j) == characterColor){
+                        topLeftWhitePixelCount++;
+                    }
+                    totalPixelCount++;
+                }
+                for (int k=(height/2); k<height; k++){
+                    if(bufferedImage.getRGB(i, k) == characterColor) {
+                        bottomLeftWhitePixelCount++;
+                    }
+                    totalPixelCount++;
+                }
+            }
 
-        for (int i=0; i<(width/2); i++){
-            for (int j=0; j<(height/2); j++){
-                if(bufferedImage.getRGB(i, j) == characterColor){
-                    topLeftWhitePixelCount++;
+            for (int i=(width/2); i<width; i++){
+                for (int j=0; j<(height/2); j++){
+                    if(bufferedImage.getRGB(i, j) == characterColor) {
+                        topRightWhitePixelCount++;
+                    }
+                    totalPixelCount++;
                 }
-                totalPixelCount++;
-            }
-            for (int k=(height/2); k<height; k++){
-                if(bufferedImage.getRGB(i, k) == characterColor) {
-                    bottomLeftWhitePixelCount++;
+                for (int k=(height/2); k<height; k++){
+                    if(bufferedImage.getRGB(i, k) == characterColor){
+                        bottomRightWhitePixelCount++;
+                    }
+                    totalPixelCount++;
                 }
-                totalPixelCount++;
             }
+
+            float totalWhitePixelCount = topLeftWhitePixelCount + topRightWhitePixelCount + bottomLeftWhitePixelCount + bottomRightWhitePixelCount;
+            pixelCount[0] = topLeftWhitePixelCount/totalWhitePixelCount;
+            pixelCount[1] = topRightWhitePixelCount/totalWhitePixelCount;
+            pixelCount[2] = bottomLeftWhitePixelCount/totalWhitePixelCount;
+            pixelCount[3] = bottomRightWhitePixelCount/totalWhitePixelCount;
+        } else if (split == 9) {
+            pixelCount = new Float[9];
+            pixelCount[0] = 0f;
+            pixelCount[1] = 0f;
+            pixelCount[2] = 0f;
+            pixelCount[3] = 0f;
+            pixelCount[4] = 0f;
+            pixelCount[5] = 0f;
+            pixelCount[6] = 0f;
+            pixelCount[7] = 0f;
+            pixelCount[8] = 0f;
+
+            for (int i=0; i < (bufferedImage.getWidth()/3); i++){
+                for (int j=0; j<(bufferedImage.getHeight()/3); j++){
+                    if(bufferedImage.getRGB(i, j) == characterColor){
+                        pixelCount[0]++;
+                    }
+                }
+                for (int k=(bufferedImage.getHeight()/3); k < 2 * bufferedImage.getHeight() / 3; k++){
+                    if(bufferedImage.getRGB(i, k) == characterColor) {
+                        pixelCount[1]++;
+                    }
+                }
+
+                for (int k=(2 * bufferedImage.getHeight()/3); k < bufferedImage.getHeight(); k++){
+                    if(bufferedImage.getRGB(i, k) == characterColor) {
+                        pixelCount[2]++;
+                    }
+                }
+            }
+
+            for (int i=0; i < (2 * bufferedImage.getWidth()/3); i++){
+                for (int j=0; j<(bufferedImage.getHeight()/3); j++){
+                    if(bufferedImage.getRGB(i, j) == characterColor){
+                        pixelCount[3]++;
+                    }
+                }
+                for (int k=(bufferedImage.getHeight()/3); k < 2 * bufferedImage.getHeight() / 3; k++){
+                    if(bufferedImage.getRGB(i, k) == characterColor) {
+                        pixelCount[4]++;
+                    }
+                }
+
+                for (int k=(2 * bufferedImage.getHeight()/3); k < bufferedImage.getHeight(); k++){
+                    if(bufferedImage.getRGB(i, k) == characterColor) {
+                        pixelCount[5]++;
+                    }
+                }
+            }
+
+            for (int i=0; i < (bufferedImage.getWidth()); i++){
+                for (int j=0; j<(bufferedImage.getHeight()/3); j++){
+                    if(bufferedImage.getRGB(i, j) == characterColor){
+                        pixelCount[6]++;
+                    }
+                }
+                for (int k=(bufferedImage.getHeight()/3); k < 2 * bufferedImage.getHeight() / 3; k++){
+                    if(bufferedImage.getRGB(i, k) == characterColor) {
+                        pixelCount[7]++;
+                    }
+                }
+
+                for (int k=(2 * bufferedImage.getHeight()/3); k < bufferedImage.getHeight(); k++){
+                    if(bufferedImage.getRGB(i, k) == characterColor) {
+                        pixelCount[8]++;
+                    }
+                }
+            }
+            
+            float totalPixelCount = bufferedImage.getHeight() * bufferedImage.getWidth();
+
+            pixelCount[0] /= totalPixelCount;
+            pixelCount[1] /= totalPixelCount;
+            pixelCount[2] /= totalPixelCount;
+            pixelCount[3] /= totalPixelCount;
+            pixelCount[4] /= totalPixelCount;
+            pixelCount[5] /= totalPixelCount;
+            pixelCount[6] /= totalPixelCount;
+            pixelCount[7] /= totalPixelCount;
+            pixelCount[8] /= totalPixelCount;
         }
-
-        for (int i=(width/2); i<width; i++){
-            for (int j=0; j<(height/2); j++){
-                if(bufferedImage.getRGB(i, j) == characterColor) {
-                    topRightWhitePixelCount++;
-                }
-                totalPixelCount++;
-            }
-            for (int k=(height/2); k<height; k++){
-                if(bufferedImage.getRGB(i, k) == characterColor){
-                    bottomRightWhitePixelCount++;
-                }
-                totalPixelCount++;
-            }
-        }
-        /*
-        pixelCount[0] = topLeftWhitePixelCount/totalPixelCount;
-        pixelCount[1] = topRightWhitePixelCount/totalPixelCount;
-        pixelCount[2] = bottomLeftWhitePixelCount/totalPixelCount;
-        pixelCount[3] = bottomRightWhitePixelCount/totalPixelCount;
-        */
-
-        float totalWhitePixelCount = topLeftWhitePixelCount + topRightWhitePixelCount + bottomLeftWhitePixelCount + bottomRightWhitePixelCount;
-        pixelCount[0] = topLeftWhitePixelCount/totalWhitePixelCount;
-        pixelCount[1] = topRightWhitePixelCount/totalWhitePixelCount;
-        pixelCount[2] = bottomLeftWhitePixelCount/totalWhitePixelCount;
-        pixelCount[3] = bottomRightWhitePixelCount/totalWhitePixelCount;
-
         return pixelCount;
     }
 

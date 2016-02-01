@@ -20,30 +20,30 @@ public class DatabaseManager {
         return this;
     }
 
-    public DatabaseManager selectAll() {
+    public DatabaseManager selectAll(int limit) {
         for(ImageClass imageClass : ImageClass.values()) {
-            DatabaseFolder folder = new DatabaseFolder(IMAGE_PATH + imageClass.path + "/", imageClass, MASK_PATH + imageClass.path + "/");
+            DatabaseFolder folder = new DatabaseFolder(IMAGE_PATH + imageClass.path + "/", imageClass, MASK_PATH + imageClass.path + "/", limit);
             addFolder(folder);
         }
         return this;
     }
 
-    public DatabaseManager selectRange(ImageClass imageClass1, ImageClass imageClass2) {
+    public DatabaseManager selectRange(ImageClass imageClass1, ImageClass imageClass2, int limit) {
         int count = Math.abs(imageClass1.number - imageClass2.number) + 1;
         ImageClass startClass = imageClass1;
         if(imageClass2.number <= imageClass1.number) {
             startClass = imageClass2;
         }
 
-        for(int i = startClass.number; i <= count; i++) {
+        for(int i = startClass.number; i < count + startClass.number; i++) {
             ImageClass imageClass = ImageClass.getImageClassFromNumber(i);
-            addFolder(new DatabaseFolder(IMAGE_PATH + imageClass.path + "/", imageClass, MASK_PATH + imageClass.path + "/"));
+            addFolder(new DatabaseFolder(IMAGE_PATH + imageClass.path + "/", imageClass, MASK_PATH + imageClass.path + "/", limit));
         }
         return this;
     }
 
-    public DatabaseManager select(ImageClass imageClass) {
-        addFolder(new DatabaseFolder(IMAGE_PATH + imageClass.path + "/", imageClass, MASK_PATH + imageClass.path + "/"));
+    public DatabaseManager select(ImageClass imageClass, int limit) {
+        addFolder(new DatabaseFolder(IMAGE_PATH + imageClass.path + "/", imageClass, MASK_PATH + imageClass.path + "/", limit));
         return this;
     }
 

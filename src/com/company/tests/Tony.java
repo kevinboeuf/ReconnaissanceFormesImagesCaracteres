@@ -20,7 +20,7 @@ public class Tony {
 
     public static void runTest(int testNumber) {
         if(testNumber == 0) {
-            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.z, 0);
+            Main.databaseManager.select(ImageClass.ZERO, 0);
             Main.loadImagesList();
             Main.applyGaussianBlur();
             Main.applyGrayScale();
@@ -33,8 +33,12 @@ public class Tony {
 //            Main.generateAttributeFormat(0.30);
 //            Main.generateAttributeRelevantSurface();
             Main.generateAttributePixelRepartitions(9);
-            Main.generateAttributeHorizontalCharacterLines();
-            Main.generateAttributeVerticalCharacterLines();
+            Main.generateAttributeMiddleHorizontalCharacterLines();
+            Main.generateAttributeMiddleVerticalCharacterLines();
+            Main.generateAttributeOneThirdHorizontalCharacterLines();
+            Main.generateAttributeOneThirdVerticalCharacterLines();
+            Main.generateAttributeTwoThirdHorizontalCharacterLines();
+            Main.generateAttributeTwoThirdVerticalCharacterLines();
             Main.generateAttributeVerticalCenterSymetry(0, 90);
             Main.generateAttributeHorizontalCenterSymetry(0, 90);
             Main.generateARFF();

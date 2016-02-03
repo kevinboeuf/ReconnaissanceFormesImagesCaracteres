@@ -29,10 +29,22 @@ public class ImageRelation {
     List<Float> characterPixelsRepartitionRatio = new ArrayList<>();
 
     @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
-    int horizontalCharacterLines = -1;
+    int middleHorizontalCharacterLines = -1;
 
     @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
-    int verticalCharacterLines = -1;
+    int middleVerticalCharacterLines = -1;
+
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    int oneThirdHorizontalCharacterLines = -1;
+
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    int oneThirdVerticalCharacterLines = -1;
+
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    int twoThirdHorizontalCharacterLines = -1;
+
+    @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
+    int twoThirdVerticalCharacterLines = -1;
 
     @RelationAnnotation(type = AnnotationType.SINGLE_ENUM, singleType = ARFFType.NUMERIC)
     float horizontalCenterSymetry = -1;
@@ -43,13 +55,17 @@ public class ImageRelation {
     @RelationAnnotation(isClass = true, type = AnnotationType.MULTIPLE_ENUM, multipleType = ImageClass.class)
     ImageClass classe = ImageClass.ZERO;
 
-    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, List<Float> characterPixelsRepartitionRatio, int horizontalCharacterLines, int verticalCharacterLines, float horizontalCenterSymetry, float verticalCenterSymetry, ImageClass classe) {
+    public ImageRelation(Integer size, Double relevantSurface, FormatAttribute format, List<Float> characterPixelsRepartitionRatio, int middleHorizontalCharacterLines, int middleVerticalCharacterLines, int oneThirdHorizontalCharacterLines, int oneThirdVerticalCharacterLines, int twoThirdHorizontalCharacterLines, int twoThirdVerticalCharacterLines, float horizontalCenterSymetry, float verticalCenterSymetry, ImageClass classe) {
         this.size = size;
         this.relevantSurface = relevantSurface;
         this.format = format;
         this.characterPixelsRepartitionRatio = characterPixelsRepartitionRatio;
-        this.horizontalCharacterLines = horizontalCharacterLines;
-        this.verticalCharacterLines = verticalCharacterLines;
+        this.middleHorizontalCharacterLines = middleHorizontalCharacterLines;
+        this.middleVerticalCharacterLines = middleVerticalCharacterLines;
+        this.oneThirdHorizontalCharacterLines = oneThirdHorizontalCharacterLines;
+        this.oneThirdVerticalCharacterLines = oneThirdVerticalCharacterLines;
+        this.twoThirdHorizontalCharacterLines = twoThirdHorizontalCharacterLines;
+        this.twoThirdVerticalCharacterLines = twoThirdVerticalCharacterLines;
         this.horizontalCenterSymetry = horizontalCenterSymetry;
         this.verticalCenterSymetry = verticalCenterSymetry;
         this.classe = classe;
@@ -172,8 +188,15 @@ public class ImageRelation {
         Integer size = -1;
         Double relevantSurface = 0.0;
         FormatAttribute format = FormatAttribute.SQUARE;
-        int horizontalCharacterLines = 0;
-        int verticalCharacterLines = 0;
+        int middleHorizontalCharacterLines = 0;
+        int middleVerticalCharacterLines = 0;
+        int oneThirdHorizontalCharacterLines = 0;
+        int oneThirdVerticalCharacterLines = 0;
+        int twoThirdHorizontalCharacterLines = 0;
+        int twoThirdVerticalCharacterLines = 0;
+
+
+
         List<Float> characterPixelsRepartitionRatio = new ArrayList<>();
         float verticalCenterSymetry = -1f;
         float horizontalCenterSymetry = -1f;
@@ -216,15 +239,39 @@ public class ImageRelation {
             return this;
         }
 
-        public ImageRelation.Builder setHorizontalCharacterLines(int horizontalCharacterLines) {
-            this.horizontalCharacterLines = horizontalCharacterLines;
-            enable("horizontalCharacterLines");
+        public ImageRelation.Builder setMiddleHorizontalCharacterLines(int horizontalCharacterLines) {
+            this.middleHorizontalCharacterLines = horizontalCharacterLines;
+            enable("middleHorizontalCharacterLines");
             return this;
         }
 
-        public ImageRelation.Builder setVerticalCharacterLines(int verticalCharacterLines) {
-            this.verticalCharacterLines = verticalCharacterLines;
-            enable("verticalCharacterLines");
+        public ImageRelation.Builder setMiddleVerticalCharacterLines(int verticalCharacterLines) {
+            this.middleVerticalCharacterLines = verticalCharacterLines;
+            enable("middleVerticalCharacterLines");
+            return this;
+        }
+
+        public ImageRelation.Builder setOneThirdHorizontalCharacterLines(int horizontalCharacterLines) {
+            this.oneThirdHorizontalCharacterLines = horizontalCharacterLines;
+            enable("oneThirdHorizontalCharacterLines");
+            return this;
+        }
+
+        public ImageRelation.Builder setOneThirdVerticalCharacterLines(int verticalCharacterLines) {
+            this.oneThirdVerticalCharacterLines = verticalCharacterLines;
+            enable("oneThirdVerticalCharacterLines");
+            return this;
+        }
+
+        public ImageRelation.Builder setTwoThirdHorizontalCharacterLines(int horizontalCharacterLines) {
+            this.twoThirdHorizontalCharacterLines = horizontalCharacterLines;
+            enable("twoThirdHorizontalCharacterLines");
+            return this;
+        }
+
+        public ImageRelation.Builder setTwoThirdVerticalCharacterLines(int verticalCharacterLines) {
+            this.twoThirdVerticalCharacterLines = verticalCharacterLines;
+            enable("twoThirdVerticalCharacterLines");
             return this;
         }
 
@@ -254,7 +301,7 @@ public class ImageRelation {
         }
 
         public ImageRelation build(){
-            return new ImageRelation(size, relevantSurface, format, characterPixelsRepartitionRatio, horizontalCharacterLines, verticalCharacterLines, horizontalCenterSymetry, verticalCenterSymetry, classe);
+            return new ImageRelation(size, relevantSurface, format, characterPixelsRepartitionRatio, middleHorizontalCharacterLines, middleVerticalCharacterLines, oneThirdHorizontalCharacterLines, oneThirdVerticalCharacterLines, twoThirdHorizontalCharacterLines, twoThirdVerticalCharacterLines, horizontalCenterSymetry, verticalCenterSymetry, classe);
         }
 
     }

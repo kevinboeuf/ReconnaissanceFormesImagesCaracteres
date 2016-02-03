@@ -19,23 +19,28 @@ public class Kevin {
 
     public static void runTest(int testNumber) {
         if(testNumber == 0) {
-            Main.databaseManager.selectRange(ImageClass.ZERO, ImageClass.Z, 0);
+            Main.databaseManager.selectRange(ImageClass.TROIS, ImageClass.TROIS, 0);
             Main.loadImagesList();
+
             Main.applyGaussianBlur();
             Main.applyGrayScale();
             Main.applyScale(scaleWidth, scaleHeight);
             Main.applyBinarization(characterColor, backgroundColor);
             Main.applyImageColor();
             Main.applyMask(true);
-            Main.applyCrop();
+            /*
+            Main.applyCrop();*/
             Main.showImagesList();
-            Main.generateAttributeFormat(0.05);
+            /*Main.generateAttributeFormat(0.05);
             Main.generateAttributeRelevantSurface();
             Main.generateAttributePixelRepartitions(4);
-            Main.generateAttributeHorizontalCharacterLines();
-            Main.generateAttributeVerticalCharacterLines();
-            Main.generateAttributeRelevantSurface();
-            Main.generateARFF();
+            Main.generateAttributeMiddleHorizontalCharacterLines();
+            Main.generateAttributeMiddleVerticalCharacterLines();
+            Main.generateAttributeOneThirdVerticalCharacterLines();
+            Main.generateAttributeOneThirdHorizontalCharacterLines();
+            Main.generateAttributeTwoThirdHorizontalCharacterLines();
+            Main.generateAttributeTwoThirdVerticalCharacterLines();
+            Main.generateARFF();*/
         }
     }
 }

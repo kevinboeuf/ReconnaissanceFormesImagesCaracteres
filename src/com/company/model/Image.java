@@ -301,6 +301,22 @@ public class Image implements Cloneable {
         return new Pixel(bufferedImage.getWidth() - 1, bufferedImage.getHeight() / 2);
     }
 
+    public Pixel getLeftOneThirdPixel() {
+        return new Pixel(0, bufferedImage.getHeight() / 3);
+    }
+
+    public Pixel getRightOneThirdPixel() {
+        return new Pixel(bufferedImage.getWidth() - 1, bufferedImage.getHeight() / 3);
+    }
+
+    public Pixel getLeftTwoThirdPixel() {
+        return new Pixel(0, 2*(bufferedImage.getHeight() / 3));
+    }
+
+    public Pixel getRightTwoThirdPixel() {
+        return new Pixel(bufferedImage.getWidth() - 1, 2*(bufferedImage.getHeight() / 3));
+    }
+
     public int getCharacterColorAreasAlongLine(Pixel aa, Pixel bb) {
         int areas = 0;
         ArrayList<Pixel> pixelsList = findPixelCoordinatesAlongStraightLine(aa, bb);

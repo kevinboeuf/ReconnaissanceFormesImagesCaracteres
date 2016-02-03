@@ -153,23 +153,63 @@ public class Main {
         }
     }
 
-    public static void generateAttributeHorizontalCharacterLines() {
+    public static void generateAttributeMiddleHorizontalCharacterLines() {
         for (SDDImage sddImage : imagesList) {
             int count = sddImage.image.getCharacterColorAreasAlongLine(
                     sddImage.image.getLeftMiddlePixel(),
                     sddImage.image.getRightMiddlePixel()
             );
-            sddImage.builder.setHorizontalCharacterLines(count);
+            sddImage.builder.setMiddleHorizontalCharacterLines(count);
         }
     }
 
-    public static void generateAttributeVerticalCharacterLines() {
+    public static void generateAttributeMiddleVerticalCharacterLines() {
         for (SDDImage sddImage : imagesList) {
             int count = sddImage.image.getCharacterColorAreasAlongLine(
                     sddImage.image.getTopMiddlePixel(),
                     sddImage.image.getBottomMiddlePixel()
             );
-            sddImage.builder.setVerticalCharacterLines(count);
+            sddImage.builder.setMiddleVerticalCharacterLines(count);
+        }
+    }
+
+    public static void generateAttributeOneThirdHorizontalCharacterLines() {
+        for (SDDImage sddImage : imagesList) {
+            int count = sddImage.image.getCharacterColorAreasAlongLine(
+                    sddImage.image.getLeftOneThirdPixel(),
+                    sddImage.image.getRightOneThirdPixel()
+            );
+            sddImage.builder.setOneThirdHorizontalCharacterLines(count);
+        }
+    }
+
+    public static void generateAttributeOneThirdVerticalCharacterLines() {
+        for (SDDImage sddImage : imagesList) {
+            int count = sddImage.image.getCharacterColorAreasAlongLine(
+                    sddImage.image.getTopMiddlePixel(),
+                    sddImage.image.getBottomMiddlePixel()
+            );
+            sddImage.builder.setOneThirdVerticalCharacterLines(count);
+        }
+    }
+
+    public static void generateAttributeTwoThirdHorizontalCharacterLines() {
+        for (SDDImage sddImage : imagesList) {
+            int count = sddImage.image.getCharacterColorAreasAlongLine(
+                    sddImage.image.getLeftOneThirdPixel(),
+                    sddImage.image.getRightOneThirdPixel()
+            );
+            sddImage.builder.setTwoThirdHorizontalCharacterLines(count);
+        }
+    }
+
+    public static void generateAttributeTwoThirdVerticalCharacterLines() {
+        for (SDDImage sddImage : imagesList) {
+            int count = sddImage.image.getCharacterColorAreasAlongLine(
+                    sddImage.image.getTopMiddlePixel(),
+                    sddImage.image.getBottomMiddlePixel()
+            );
+            sddImage.builder.setTwoThirdVerticalCharacterLines(count);
         }
     }
 

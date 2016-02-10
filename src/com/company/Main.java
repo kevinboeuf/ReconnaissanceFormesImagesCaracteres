@@ -22,18 +22,44 @@ public class Main {
     public static ArrayList<SDDImage>  imagesList = new ArrayList<SDDImage>();
     public static DatabaseManager databaseManager = new DatabaseManager();
 
-    public static void main(String[] args) {}
-
-    public static void runTest(int testNumber) {
+    public static void main(String[] args) {
+        System.out.println("Création de la base de données d'images...");
+        Main.databaseManager.selectAll(0);
+        Main.loadImagesList();
+        Main.applyGaussianBlur();
+        Main.applyGrayScale();
+        Main.applyScale(scaleWidth, scaleHeight);
+        Main.applyBinarization(characterColor, backgroundColor);
+        Main.applyImageColor();
+        Main.applyMask(true);
+        Main.applyCrop();
+        System.out.println("Génération des attributs...");
+        Main.generateAttributeSize();
+        Main.generateAttributeFormat(0.90);
+        Main.generateAttributeRelevantSurface();
+        Main.generateAttributePixelRepartitions(9);
+        Main.generateAttributeMiddleHorizontalCharacterLines();
+        Main.generateAttributeMiddleVerticalCharacterLines();
+        Main.generateAttributeOneThirdHorizontalCharacterLines();
+        Main.generateAttributeOneThirdVerticalCharacterLines();
+        Main.generateAttributeTwoThirdHorizontalCharacterLines();
+        Main.generateAttributeTwoThirdVerticalCharacterLines();
+        Main.generateAttributeVerticalCenterSymetry(0, 90);
+        Main.generateAttributeHorizontalCenterSymetry(0, 90);
+        Main.generateARFF();
+        Main.showImagesList();
+        System.out.println("Fin");
     }
 
     public static void loadImagesList(){
+        System.out.println("Chargement des images...");
         for(DatabaseItem item :databaseManager.databaseItems) {
             imagesList.add(new SDDImage(item.name, new Image(ImageUtils.loadImage(item.path)), item.imageClass));
         }
     }
 
     public static ArrayList<Image> loadMasksList(){
+        System.out.println("Chargement des marques...");
         ArrayList<Image> masksList = new ArrayList<>();
         for(DatabaseItem item :databaseManager.databaseItems) {
             masksList.add(new Image(ImageUtils.loadImage(item.maskPath)));
@@ -44,30 +70,35 @@ public class Main {
     //== Pré-traitements sur les images
 
     public static void applyGaussianBlur() {
+        System.out.println("application du floue gaussien...");
         for(SDDImage sddImage : imagesList) {
             sddImage.image.gaussianBlur();
         }
     }
 
     public static void applyGrayScale() {
+        System.out.println("Transformation des images en niveaux de gris...");
         for(SDDImage sddImage : imagesList) {
             sddImage.image.grayScale();
         }
     }
 
     public static void applyBinarization(Color characterColor, Color backgroundColor) {
+        System.out.println("Transformation des images en noir et blanc...");
         for(SDDImage sddImage : imagesList) {
             sddImage.image = sddImage.image.getBynaryImage(characterColor, backgroundColor);
         }
     }
 
     public static void applyScale(int width, int height) {
+        System.out.println("Redimentionnement des des images en ["+width+" par "+height+"]...");
         for(SDDImage sddImage : imagesList) {
             sddImage.image.scale(width, height);
         }
     }
 
     public static void applyImageColor() {
+        System.out.println("Inversion des couleurs si necessaire...");
         for(SDDImage sddImage : imagesList) {
             if(sddImage.image.computeImageBackgroundColor() != backgroundColor.getRGB()) {
                 ((BinaryImage) sddImage.image).invertImageColors();
@@ -76,6 +107,7 @@ public class Main {
     }
 
     public static void applyMask(boolean scaleMask) {
+        System.out.println("Application des masques sur les images...");
         ArrayList<Image> masksList = loadMasksList();
 //        ImageUtils.showImageList(masksList, displayWindowWidth, displayWindowHeight);
         Image mask = null;
@@ -89,6 +121,7 @@ public class Main {
     }
 
     public static void applyCrop() {
+        System.out.println("Crop des images...");
         for(SDDImage sddImage : imagesList) {
             Rectangle rectangle = sddImage.image.getBoundaries(characterColor.getRGB());
             sddImage.image.crop(rectangle);
@@ -116,6 +149,7 @@ public class Main {
     //-- Génération d'attributs
 
     public static void generateARFF() {
+        System.out.println("Génération du fichier ARFF...");
         ArrayList<ImageRelation> imageRelations = new ArrayList<>();
         for(SDDImage sddImage : imagesList) {
             sddImage.builder.setClasse(sddImage.imageClass);
@@ -150,6 +184,16 @@ public class Main {
             int[] colorsCount = ((BinaryImage)sddImage.image).countPixelsByColors();
             double surface = (float)colorsCount[0] / ((float)colorsCount[0] + (float)colorsCount[1]);
             sddImage.builder.setRelevantSurface(surface);
+        }
+    }
+
+    /**
+     * Get the format of the SDDImage
+     * @return
+     */
+    public static void generateAttributeSize(){
+        for(SDDImage sddImage : imagesList) {
+            sddImage.builder.setSize(sddImage.image.getSize());
         }
     }
 
